@@ -1,0 +1,67 @@
+---
+repos:
+# Fixers
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+    exclude: 'LICENSE'
+  - id: mixed-line-ending
+    args: [--fix=lf]
+
+- repo: https://github.com/dnephin/pre-commit-golang
+  rev: v0.3.5
+  hooks:
+  - id: go-fmt
+
+- repo: local
+  hooks:
+  - id: go-mod-tidy
+    name: go-mod-tidy
+    entry: ./mage check:tidy
+    language: system
+    pass_filenames: false
+    always_run: true
+    require_serial: true
+  - id: go-mod-verify
+    name: go-mod-verify
+    entry: ./mage check:verify
+    language: system
+    pass_filenames: false
+    always_run: true
+    require_serial: true
+
+
+# Checkers
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+  - id: check-added-large-files
+  - id: check-case-conflict
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: check-yaml
+  - id: detect-private-key
+
+- repo: https://github.com/jackdewinter/pymarkdown
+  rev: 0.9.2
+  hooks:
+  - id: pymarkdown
+
+- repo: local
+  hooks:
+  - id: golangci-lint
+    name: golangci-lint
+    entry: ./mage check:lint
+    language: system
+    pass_filenames: false
+    types: [go]
+    require_serial: true
+  - id: license-check
+    name: Check pkgs for incompatible licenses
+    entry: ./mage licensecheck
+    language: system
+    files: '(\bgo\.mod$)|(\.lichen\.ya?ml$)'
+    pass_filenames: false
+    require_serial: true

@@ -1,0 +1,16 @@
+---
+# Sets match confidence to 90%.
+# See https://pkg.go.dev/github.com/google/licensecheck for more information.
+threshold: .90
+
+# Explicitly matches permissive licenses known to be compatible with this
+# module's license (Apache 2.0).
+allow:
+  - "Apache-2.0"
+  - "Apache-1.1"
+  - "BSD-3-Clause"
+  - "BSD-2-Clause"
+  - "BSD-1-Clause"
+  - "0BSD"
+  - "MIT"
+  - "MIT-0"

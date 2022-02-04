@@ -1,0 +1,18 @@
+FROM quay.io/app-sre/golang:1.17
+
+WORKDIR /ocm-addons
+
+# module dependency layers
+COPY go.mod go.sum ./
+RUN go mod download
+
+# tools dependency layers
+COPY cmd/mage/ cmd/mage/
+COPY internal/tools/ internal/tools/
+COPY mage magefile.go ./
+RUN ./mage deps:update
+
+# src layer
+COPY . ./
+
+ENTRYPOINT ["./mage"]

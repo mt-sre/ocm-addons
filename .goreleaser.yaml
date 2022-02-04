@@ -1,0 +1,39 @@
+project_name: ocm-addons
+before:
+  hooks:
+    - ./mage check:tidy
+    - ./mage check:verify
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    main: ./cmd/ocm-addons
+    binary: ocm-addons
+    ldflags:
+      - -s -w
+      - -X 'github.com/mt-sre/ocm-addons/internal/meta.version={{.Version}}'
+      - -X 'github.com/mt-sre/ocm-addons/internal/meta.commit={{.Commit}}'
+      - -X 'github.com/mt-sre/ocm-addons/internal/meta.date={{.Date}}'
+      - -X 'github.com/mt-sre/ocm-addons/internal/meta.builtBy=goreleaser'
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  use: github
+  groups:
+    - title: Changes
+      regexp: "^.*feature[(\\w)]*:+.*$"
+      order: 0
+    - title: Bugfixes
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 10
+    - title: Trivial
+      order: 999
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
