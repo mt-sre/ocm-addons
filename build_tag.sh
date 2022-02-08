@@ -2,9 +2,11 @@
 
 set -exvo pipefail -o nounset
 
-docker login quay.io -u ${QUAY_USER} -p ${QUAY_TOKEN}
+# utilize local go 1.17 version if available
+GO_1_17="/opt/go/1.17.5/bin"
 
-IMAGE=ocm-addons-ci
+if [ -d  "${GO_1_17}" ]; then
+     PATH="${GO_1_17}:${PATH}"
+fi
 
-docker build -t ${IMAGE} -f Dockerfile.ci .
-docker run --rm -e "GITHUB_TOKEN=${GITHUB_TOKEN}" "${IMAGE}" release:full
+echo "$(curl -sL https://git.io/goreleaser) --rm-dist" | bash
