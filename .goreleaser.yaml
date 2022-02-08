@@ -1,8 +1,8 @@
 project_name: ocm-addons
 before:
   hooks:
-    - ./mage check:tidy
-    - ./mage check:verify
+    - go mod tidy
+    - go mod verify
 builds:
   - env:
       - CGO_ENABLED=0
