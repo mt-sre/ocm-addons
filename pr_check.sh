@@ -2,7 +2,10 @@
 
 set -exvo pipefail -o nounset
 
+docker login quay.io -u ${QUAY_USER} -p ${QUAY_TOKEN}
+
 IMAGE=ocm-addons-ci
 
 docker build -t ${IMAGE} -f Dockerfile.ci .
-docker run --rm --timeout 900 ${IMAGE} check test
+docker run --rm ${IMAGE} -t 10m check
+docker run --rm ${IMAGE} -t 10m test
