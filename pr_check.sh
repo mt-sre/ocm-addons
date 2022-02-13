@@ -2,10 +2,12 @@
 
 set -exvo pipefail -o nounset
 
-docker login quay.io -u ${QUAY_USER} -p ${QUAY_TOKEN}
+# utilize local go 1.17 version if available
+GO_1_17="/opt/go/1.17.5/bin"
 
-IMAGE=ocm-addons-ci
+if [ -d  "${GO_1_17}" ]; then
+     PATH="${GO_1_17}:${PATH}"
+fi
 
-docker build -t ${IMAGE} -f Dockerfile.ci .
-docker run --rm ${IMAGE} -t 10m check
-docker run --rm ${IMAGE} -t 10m test
+./mage -t 10m check
+./mage -t 10m test
