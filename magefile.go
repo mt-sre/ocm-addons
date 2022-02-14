@@ -91,8 +91,8 @@ func dependencies() tools.DependencyManifest {
 				Module:  "github.com/golangci/golangci-lint/cmd/golangci-lint",
 			}, {
 				Name:    "ginkgo",
-				Version: "v1.16.4",
-				Module:  "github.com/onsi/ginkgo/ginkgo",
+				Version: "v2.1.1",
+				Module:  "github.com/onsi/ginkgo/v2/ginkgo",
 			}, {
 				Name:    "ocm",
 				Version: "latest",
@@ -281,10 +281,10 @@ func (Test) Integration(ctx context.Context) error {
 
 	args := []string{
 		"-r",
-		"--randomizeAllSpecs",
-		"--randomizeSuites",
-		"--failOnPending",
-		"--keepGoing",
+		"--randomize-all",
+		"--randomize-suites",
+		"--fail-on-pending",
+		"--keep-going",
 		"--race",
 		"--trace",
 	}

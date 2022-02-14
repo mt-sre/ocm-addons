@@ -60,7 +60,7 @@ repos:
     require_serial: true
   - id: license-check
     name: Check pkgs for incompatible licenses
-    entry: ./mage licensecheck
+    entry: ./mage check:license
     language: system
     files: '(\bgo\.mod$)|(\.lichen\.ya?ml$)'
     pass_filenames: false
