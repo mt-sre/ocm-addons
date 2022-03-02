@@ -12,7 +12,7 @@ func Cmd() *cobra.Command {
 
 func generateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cluster [CLUSTER_ID|EXTERNAL_ID|CLUSTER_NAME|CLUSTER_NAME_SEARCH]",
+		Use:   "cluster [command]",
 		Short: "retrieve cluster details",
 		Long:  "Retrieves cluster details with additional information for installed add-ons.",
 		Args:  cobra.MinimumNArgs(1),

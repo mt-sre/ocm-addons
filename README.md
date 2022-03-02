@@ -56,6 +56,13 @@ Additionally you should install [pre-commit](https://pre-commit.com/#install) to
 ensure code quality with every commit. Once installed run `pre-commit install`
 in your local copy of this repository to initialize the pre-commit hooks.
 
+## Configuration
+
+### Adding New Customer Notifications
+
+See [this](internal/notification/data/README.md) document for information
+regarding the addition of new customer notifications.
+
 ## Known Issues
 
 ### Pager support

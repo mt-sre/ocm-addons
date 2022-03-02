@@ -184,6 +184,41 @@ func (c *Cluster) ProductID() string {
 	return fmt.Sprintf("%s,%s", c.Product().ID(), ccsDisplayValue)
 }
 
+func (c *Cluster) PostLog(ctx context.Context, opts ...LogEntryOption) error {
+	trace := c.logger.
+		WithFields(log.Fields{
+			"cluster": c.ID(),
+		}).Trace("posting log entry")
+	defer trace.Stop(nil)
+
+	ent, err := NewLogEntry(c, opts...)
+	if err != nil {
+		return fmt.Errorf("generating log entry: %w", err)
+	}
+
+	trace.WithFields(log.Fields{
+		"entrySeverity": ent.Entry.Severity(),
+		"entrySummary":  ent.Entry.Summary(),
+	}).Debug("generated entry")
+
+	res, err := c.conn.
+		ServiceLogs().
+		V1().
+		ClusterLogs().
+		Add().
+		Body(ent.Entry).
+		SendContext(ctx)
+	if err != nil {
+		return fmt.Errorf("posting log entry: %w", err)
+	}
+
+	if res.Error() != nil {
+		return fmt.Errorf("posting log entry failed with status %d: %w", res.Status(), res.Error())
+	}
+
+	return nil
+}
+
 func (c *Cluster) GetLogs(ctx context.Context, opts GetLogsOptions) ([]LogEntry, error) {
 	query := opts.Query()
 
@@ -210,7 +245,7 @@ func (c *Cluster) GetLogs(ctx context.Context, opts GetLogsOptions) ([]LogEntry,
 	entries := NewLogEntrySorter(res.Items().Len(), opts.sorter)
 
 	res.Items().Each(func(entry *slv1.LogEntry) bool {
-		entries.Append(LogEntry{entry})
+		entries.Append(LogEntry{Entry: entry})
 
 		return true
 	})

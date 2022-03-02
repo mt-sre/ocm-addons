@@ -29,5 +29,7 @@ linters:
   - paralleltest
   # Tests cannot be blackboxed.
   - testpackage
+  # Annoying
+  - varnamelen
   # Errors are propagated back to commands.
   - wrapcheck

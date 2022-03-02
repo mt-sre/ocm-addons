@@ -1,0 +1,7 @@
+---
+ceph-osd-critically-full:
+  summary: "CephOSDCriticallyFull"
+  severity: "Error"
+  description: >-
+    Utilization of back-end storage device (OSD) has crossed 80%.
+    Immediately free up some space or expand the storage cluster or contact support
