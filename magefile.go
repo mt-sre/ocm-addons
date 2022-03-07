@@ -20,6 +20,7 @@ var Aliases = map[string]interface{}{
 	"clean":   All.Clean,
 	"test":    All.Test,
 	"install": Build.Install,
+	"release": Release.Full,
 }
 
 type All mg.Namespace
@@ -238,7 +239,7 @@ func (Release) Full() error {
 		Release.Clean,
 	)
 
-	return sh.Run(path.Join(_depBin, "goreleaser"), "release")
+	return sh.Run(path.Join(_depBin, "goreleaser"), "release", "--rm-dist")
 }
 
 // Generates release artifacts locally.
