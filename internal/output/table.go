@@ -6,18 +6,15 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"text/tabwriter"
-)
 
-const tabWidth = 8
+	"github.com/pterm/pterm"
+)
 
 func NewTable(opts ...TableOption) (*Table, error) {
 	var table Table
 
 	table.cfg.Option(opts...)
 	table.cfg.Default()
-
-	out := table.cfg.Out
 
 	if table.cfg.PagerBin != "" {
 		var err error
@@ -27,32 +24,24 @@ func NewTable(opts ...TableOption) (*Table, error) {
 			return nil, err
 		}
 
-		out = table.pager
+		table.cfg.Out = table.pager
 	}
 
-	table.writer = tabwriter.NewWriter(out, 0, tabWidth, 1, '\t', 0)
-
 	if !table.cfg.NoHeaders {
-		if err := table.writeHeaders(); err != nil {
-			return nil, err
-		}
+		table.writeHeaders()
 	}
 
 	return &table, nil
 }
 
 type Table struct {
-	cfg    TableConfig
-	pager  *Pager
-	writer *tabwriter.Writer
+	cfg   TableConfig
+	data  [][]string
+	pager *Pager
 }
 
-func (t *Table) writeHeaders() error {
-	row := strings.Join(t.formattedHeaders(), "\t")
-
-	_, err := t.writer.Write([]byte(row + "\t\n"))
-
-	return err
+func (t *Table) writeHeaders() {
+	t.data = append(t.data, t.formattedHeaders())
 }
 
 func (t *Table) formattedHeaders() []string {
@@ -74,15 +63,31 @@ func (t *Table) Write(r ToRower, mods ...RowModifier) error {
 
 	processedRow := t.cfg.Selector(row)
 
-	_, err := t.writer.Write([]byte(processedRow.Format()))
+	t.data = append(t.data, processedRow.Values())
 
-	return err
+	return nil
 }
 
 func (t *Table) Flush() error {
 	var finalErr error
 
-	if err := t.writer.Flush(); err != nil {
+	printer := pterm.DefaultTable.
+		WithData(t.data)
+
+	if !t.cfg.NoHeaders {
+		printer = printer.
+			WithHasHeader().
+			WithHeaderStyle(
+				pterm.NewStyle(pterm.Bold),
+			)
+	}
+
+	contents, err := printer.Srender()
+	if err != nil {
+		finalErr = fmt.Errorf("rendering table: %w", finalErr)
+	}
+
+	if _, err := fmt.Fprintln(t.cfg.Out, contents); err != nil {
 		finalErr = fmt.Errorf("flusing writer: %w", finalErr)
 	}
 
@@ -170,16 +175,14 @@ type ToRower interface {
 
 type Row []Field
 
-func (r Row) Format() string {
-	fields := make([]string, 0, len(r))
+func (r Row) Values() []string {
+	result := make([]string, 0, len(r))
 
 	for _, f := range r {
-		fields = append(fields, f.ValueString())
+		result = append(result, f.ValueString())
 	}
 
-	res := strings.Join(fields, "\t")
-
-	return res + "\t\n"
+	return result
 }
 
 func (r Row) GetField(name string) Field {
