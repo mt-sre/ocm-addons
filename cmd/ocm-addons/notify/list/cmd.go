@@ -26,6 +26,7 @@ type options struct {
 
 func generateCommand(opts *options, run func(*cobra.Command, []string) error) *cobra.Command {
 	cmd := &cobra.Command{
+		Use:     "list",
 		Aliases: []string{"ls"},
 		Short:   "list available notifications",
 		Long:    "List available notifications",
