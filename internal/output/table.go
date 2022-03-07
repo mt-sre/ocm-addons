@@ -7,8 +7,6 @@ import (
 	"os/exec"
 	"strings"
 	"text/tabwriter"
-
-	"github.com/fatih/color"
 )
 
 const tabWidth = 8
@@ -50,10 +48,9 @@ type Table struct {
 }
 
 func (t *Table) writeHeaders() error {
-	bold := color.New(color.Bold).Sprint
 	row := strings.Join(t.formattedHeaders(), "\t")
 
-	_, err := t.writer.Write([]byte(bold(row) + "\t\n"))
+	_, err := t.writer.Write([]byte(row + "\t\n"))
 
 	return err
 }
@@ -68,8 +65,14 @@ func (t *Table) formattedHeaders() []string {
 	return headers
 }
 
-func (t *Table) Write(r ToRower) error {
-	processedRow := t.cfg.Selector(r.ToRow())
+func (t *Table) Write(r ToRower, mods ...RowModifier) error {
+	row := r.ToRow()
+
+	for _, mod := range mods {
+		row = mod(row)
+	}
+
+	processedRow := t.cfg.Selector(row)
 
 	_, err := t.writer.Write([]byte(processedRow.Format()))
 
@@ -198,6 +201,14 @@ func normalizeString(s string) string {
 	snaked := strings.Join(strings.Fields(trimmed), "_")
 
 	return strings.ToLower(snaked)
+}
+
+type RowModifier func(Row) Row
+
+func WithAdditionalFields(fs ...Field) RowModifier {
+	return func(r Row) Row {
+		return append(r, fs...)
+	}
 }
 
 type Field struct {
