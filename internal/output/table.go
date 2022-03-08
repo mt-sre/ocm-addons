@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pterm/pterm"
+	"go.uber.org/multierr"
 )
 
 func NewTable(opts ...TableOption) (*Table, error) {
@@ -69,10 +70,23 @@ func (t *Table) Write(r ToRower, mods ...RowModifier) error {
 }
 
 func (t *Table) Flush() error {
-	var finalErr error
+	var errCollector error
 
-	printer := pterm.DefaultTable.
-		WithData(t.data)
+	if err := t.flush(); err != nil {
+		multierr.AppendInto(&errCollector, fmt.Errorf("flusing writer: %w", err))
+	}
+
+	if t.pager != nil {
+		if err := t.pager.Close(); err != nil {
+			multierr.AppendInto(&errCollector, fmt.Errorf("closing pager: %w", err))
+		}
+	}
+
+	return errCollector
+}
+
+func (t *Table) flush() error {
+	printer := pterm.DefaultTable.WithData(t.data)
 
 	if !t.cfg.NoHeaders {
 		printer = printer.
@@ -84,20 +98,14 @@ func (t *Table) Flush() error {
 
 	contents, err := printer.Srender()
 	if err != nil {
-		finalErr = fmt.Errorf("rendering table: %w", finalErr)
+		return fmt.Errorf("rendering table: %w", err)
 	}
 
 	if _, err := fmt.Fprintln(t.cfg.Out, contents); err != nil {
-		finalErr = fmt.Errorf("flusing writer: %w", finalErr)
+		return fmt.Errorf("flusing writer: %w", err)
 	}
 
-	if t.pager != nil {
-		if err := t.pager.Close(); err != nil {
-			finalErr = fmt.Errorf("closing pager: %w", finalErr)
-		}
-	}
-
-	return finalErr
+	return nil
 }
 
 type TableConfig struct {

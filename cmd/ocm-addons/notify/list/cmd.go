@@ -53,6 +53,7 @@ func run(opts *options) func(*cobra.Command, []string) error {
 
 		tableOpts := []output.TableOption{
 			output.WithColumns(opts.Columns),
+			output.WithNoHeaders(opts.NoHeaders),
 		}
 
 		if pager := sess.Config().Pager(); pager != "" {
