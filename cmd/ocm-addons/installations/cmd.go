@@ -109,13 +109,12 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 func setupTable(sess cli.Session, opts *options) (*output.Table, error) {
 	tableOpts := []output.TableOption{
 		output.WithColumns(opts.Columns),
+		output.WithNoHeaders(opts.NoHeaders),
 	}
 
 	if pager := sess.Config().Pager(); pager != "" {
 		tableOpts = append(tableOpts, output.WithPager(pager))
 	}
-
-	tableOpts = append(tableOpts, output.WithNoHeaders(opts.NoHeaders))
 
 	return output.NewTable(tableOpts...)
 }

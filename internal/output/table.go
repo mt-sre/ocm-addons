@@ -6,18 +6,16 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"text/tabwriter"
-)
 
-const tabWidth = 8
+	"github.com/pterm/pterm"
+	"go.uber.org/multierr"
+)
 
 func NewTable(opts ...TableOption) (*Table, error) {
 	var table Table
 
 	table.cfg.Option(opts...)
 	table.cfg.Default()
-
-	out := table.cfg.Out
 
 	if table.cfg.PagerBin != "" {
 		var err error
@@ -27,32 +25,24 @@ func NewTable(opts ...TableOption) (*Table, error) {
 			return nil, err
 		}
 
-		out = table.pager
+		table.cfg.Out = table.pager
 	}
 
-	table.writer = tabwriter.NewWriter(out, 0, tabWidth, 1, '\t', 0)
-
 	if !table.cfg.NoHeaders {
-		if err := table.writeHeaders(); err != nil {
-			return nil, err
-		}
+		table.writeHeaders()
 	}
 
 	return &table, nil
 }
 
 type Table struct {
-	cfg    TableConfig
-	pager  *Pager
-	writer *tabwriter.Writer
+	cfg   TableConfig
+	data  [][]string
+	pager *Pager
 }
 
-func (t *Table) writeHeaders() error {
-	row := strings.Join(t.formattedHeaders(), "\t")
-
-	_, err := t.writer.Write([]byte(row + "\t\n"))
-
-	return err
+func (t *Table) writeHeaders() {
+	t.data = append(t.data, t.formattedHeaders())
 }
 
 func (t *Table) formattedHeaders() []string {
@@ -74,25 +64,48 @@ func (t *Table) Write(r ToRower, mods ...RowModifier) error {
 
 	processedRow := t.cfg.Selector(row)
 
-	_, err := t.writer.Write([]byte(processedRow.Format()))
+	t.data = append(t.data, processedRow.Values())
 
-	return err
+	return nil
 }
 
 func (t *Table) Flush() error {
-	var finalErr error
+	var errCollector error
 
-	if err := t.writer.Flush(); err != nil {
-		finalErr = fmt.Errorf("flusing writer: %w", finalErr)
+	if err := t.flush(); err != nil {
+		multierr.AppendInto(&errCollector, fmt.Errorf("flusing writer: %w", err))
 	}
 
 	if t.pager != nil {
 		if err := t.pager.Close(); err != nil {
-			finalErr = fmt.Errorf("closing pager: %w", finalErr)
+			multierr.AppendInto(&errCollector, fmt.Errorf("closing pager: %w", err))
 		}
 	}
 
-	return finalErr
+	return errCollector
+}
+
+func (t *Table) flush() error {
+	printer := pterm.DefaultTable.WithData(t.data)
+
+	if !t.cfg.NoHeaders {
+		printer = printer.
+			WithHasHeader().
+			WithHeaderStyle(
+				pterm.NewStyle(pterm.Bold),
+			)
+	}
+
+	contents, err := printer.Srender()
+	if err != nil {
+		return fmt.Errorf("rendering table: %w", err)
+	}
+
+	if _, err := fmt.Fprintln(t.cfg.Out, contents); err != nil {
+		return fmt.Errorf("flusing writer: %w", err)
+	}
+
+	return nil
 }
 
 type TableConfig struct {
@@ -170,16 +183,14 @@ type ToRower interface {
 
 type Row []Field
 
-func (r Row) Format() string {
-	fields := make([]string, 0, len(r))
+func (r Row) Values() []string {
+	result := make([]string, 0, len(r))
 
 	for _, f := range r {
-		fields = append(fields, f.ValueString())
+		result = append(result, f.ValueString())
 	}
 
-	res := strings.Join(fields, "\t")
-
-	return res + "\t\n"
+	return result
 }
 
 func (r Row) GetField(name string) Field {

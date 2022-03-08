@@ -26,6 +26,7 @@ type options struct {
 
 func generateCommand(opts *options, run func(*cobra.Command, []string) error) *cobra.Command {
 	cmd := &cobra.Command{
+		Use:     "list",
 		Aliases: []string{"ls"},
 		Short:   "list available notifications",
 		Long:    "List available notifications",
@@ -52,6 +53,7 @@ func run(opts *options) func(*cobra.Command, []string) error {
 
 		tableOpts := []output.TableOption{
 			output.WithColumns(opts.Columns),
+			output.WithNoHeaders(opts.NoHeaders),
 		}
 
 		if pager := sess.Config().Pager(); pager != "" {
