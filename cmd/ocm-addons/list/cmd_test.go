@@ -61,6 +61,13 @@ func TestCmdOptions(t *testing.T) {
 			},
 			reports: []interface{}{"should execute successfully"},
 		},
+		"no color flag": {
+			command: mockCommand(),
+			args: []string{
+				"--no-color",
+			},
+			reports: []interface{}{"should execute successfully"},
+		},
 		"columns flag with no arguments": {
 			command:     mockCommand(),
 			args:        []string{"--columns"},

@@ -2,10 +2,11 @@ package list
 
 import (
 	"context"
-	"os"
+	"fmt"
 
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
+	"github.com/mt-sre/ocm-addons/internal/output"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -37,6 +38,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 	flags := cmd.Flags()
 
 	opts.AddColumnsFlag(flags)
+	opts.AddNoColorFlag(flags)
 	opts.AddNoHeadersFlag(flags)
 	opts.AddSearchFlag(flags)
 
@@ -49,28 +51,22 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		sess, err := cli.NewSession()
 		if err != nil {
-			return err
+			return fmt.Errorf("starting session: %w", err)
 		}
 
 		defer sess.End()
 
-		table, err := cli.NewTable(
-			ctx,
-			sess,
-			cli.TableWriter(os.Stdout),
-			cli.TableName("addons"),
-			cli.TableColumns(opts.Columns),
-			cli.TableNoHeaders(opts.NoHeaders),
+		table, err := output.NewTable(
+			output.WithColumns(opts.Columns),
+			output.WithNoColor(opts.NoColor),
+			output.WithNoHeaders(opts.NoHeaders),
+			output.WithPager(sess.Pager()),
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf("initializing table: %w", err)
 		}
 
-		defer table.Close()
-
-		if err = table.WriteHeaders(); err != nil {
-			return err
-		}
+		defer table.Flush()
 
 		trace := sess.Logger().
 			WithFields(log.Fields{
@@ -81,20 +77,25 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		addons, err := ocm.RetrieveAddons(sess.Conn(), trace)
 		if err != nil {
-			return err
+			return fmt.Errorf("retrieving addons: %w", err)
 		}
 
 		matchingAddons := addons.SearchByNameOrID(opts.Search)
 
 		err = matchingAddons.ForEach(ctx, func(a *ocm.Addon) error {
-			if err := table.WriteObject(a); err != nil {
-				return err
+			addon, err := a.WithVersion(ctx)
+			if err != nil {
+				return fmt.Errorf("retrieving addon version: %w", err)
+			}
+
+			if err := table.Write(addon); err != nil {
+				return fmt.Errorf("writing table row: %w", err)
 			}
 
 			return nil
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("populating table: %w", err)
 		}
 
 		return nil

@@ -108,11 +108,10 @@ func (p *ClusterPager) NextPage(ctx context.Context) ([]Cluster, bool, error) {
 	}
 
 	for _, cluster := range res.Items().Slice() {
-		p.buffer = append(p.buffer, Cluster{
-			Cluster: cluster,
-			conn:    p.conn,
-			logger:  p.logger,
-		})
+		p.buffer = append(p.buffer, NewCluster(cluster,
+			WithConnection{Connection: p.conn},
+			WithLogger{Logger: p.logger},
+		))
 	}
 
 	if res.Size() < clusterPageSize {

@@ -37,6 +37,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 	flags := cmd.Flags()
 
 	opts.AddNoHeadersFlag(flags)
+	opts.AddNoColorFlag(flags)
 	opts.AddColumnsFlag(flags)
 
 	return cmd
@@ -51,16 +52,12 @@ func run(opts *options) func(*cobra.Command, []string) error {
 
 		defer sess.End()
 
-		tableOpts := []output.TableOption{
+		table, err := output.NewTable(
 			output.WithColumns(opts.Columns),
+			output.WithNoColor(opts.NoColor),
 			output.WithNoHeaders(opts.NoHeaders),
-		}
-
-		if pager := sess.Config().Pager(); pager != "" {
-			tableOpts = append(tableOpts, output.WithPager(pager))
-		}
-
-		table, err := output.NewTable(tableOpts...)
+			output.WithPager(sess.Pager()),
+		)
 		if err != nil {
 			return fmt.Errorf("creating table: %w", err)
 		}
@@ -80,17 +77,10 @@ func run(opts *options) func(*cobra.Command, []string) error {
 					cfg := cfg
 
 					if err := table.Write(&cfg, output.WithAdditionalFields(
-						output.Field{
-							Name:  "ID",
-							Value: id,
-						},
-						output.Field{
-							Name:  "Product",
-							Value: prod,
-						},
-						output.Field{
-							Name:  "Team",
-							Value: strings.ToUpper(team),
+						map[string]interface{}{
+							"ID":      id,
+							"Product": prod,
+							"Team":    strings.ToUpper(team),
 						},
 					)); err != nil {
 						return fmt.Errorf("writing table row: %w", err)

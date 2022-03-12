@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mt-sre/ocm-addons/internal/output"
 	"gopkg.in/yaml.v2"
 )
 
@@ -285,23 +284,12 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-func (c *Config) ToRow() output.Row {
-	return output.Row{
-		{
-			Name:  "Description",
-			Value: c.Description,
-		}, {
-			Name:  "Internal Only",
-			Value: c.InternalOnly,
-		}, {
-			Name:  "Service Name",
-			Value: c.ServiceName,
-		}, {
-			Name:  "Severity",
-			Value: c.Severity,
-		}, {
-			Name:  "Summary",
-			Value: c.Summary,
-		},
+func (c *Config) ProvideRowData() map[string]interface{} {
+	return map[string]interface{}{
+		"Description":   c.Description,
+		"Internal Only": c.InternalOnly,
+		"Service Name":  c.ServiceName,
+		"Severity":      c.Severity,
+		"Summary":       c.Summary,
 	}
 }

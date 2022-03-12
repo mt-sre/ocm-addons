@@ -102,5 +102,5 @@ func TestConfigInterfaces(t *testing.T) {
 	t.Parallel()
 
 	require.Implements(t, new(yaml.Unmarshaler), new(Config))
-	require.Implements(t, new(output.ToRower), new(Config))
+	require.Implements(t, new(output.RowDataProvider), new(Config))
 }

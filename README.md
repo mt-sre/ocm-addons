@@ -65,12 +65,7 @@ regarding the addition of new customer notifications.
 
 ## Known Issues
 
-### Pager support
-
-The `ocm-cli` offers the ability to configure a pager to send output
-to by default. This can be done with the command `ocm config set pager [pager]`.
-Currently only the `ocm addons installations` and `ocm addons cluster events`
-subcommands support this feature.
+No issues have been reported at this time.
 
 ## License
 

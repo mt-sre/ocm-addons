@@ -61,13 +61,27 @@ func (p *AddOnListJSONPager) ToRoutes() ([]Route, error) {
 		sdktesting.RespondWithJSON(http.StatusOK, pages[pageIndex])(w, r)
 	}
 
-	return []Route{
+	routes := []Route{
 		{
 			Method:  "GET",
 			Path:    "/api/clusters_mgmt/v1/addons",
 			Handler: handler,
 		},
-	}, nil
+	}
+
+	for _, addon := range p.items {
+		var buf bytes.Buffer
+
+		_ = cmv1.MarshalAddOnVersion(addon.Version(), &buf)
+
+		routes = append(routes, Route{
+			Method:  "GET",
+			Path:    addon.Version().HREF(),
+			Handler: sdktesting.RespondWithJSON(http.StatusOK, buf.String()),
+		})
+	}
+
+	return routes, nil
 }
 
 func (p *AddOnListJSONPager) Pages() int {

@@ -20,6 +20,7 @@ func RetrieveAddons(conn *sdk.Connection, logger log.Interface) (*AddonPager, er
 	}
 
 	return &AddonPager{
+		conn:    conn,
 		index:   1,
 		logger:  logger,
 		request: request,
@@ -32,6 +33,7 @@ type AddonPager struct {
 	buffer    []Addon
 	finalPage bool
 	index     int
+	conn      *sdk.Connection
 	logger    log.Interface
 	request   addonsListRequester
 }
@@ -75,7 +77,9 @@ func (p *AddonPager) FindByIDs(ids ...string) *AddonPager {
 // are accepted.
 func (p *AddonPager) Search(query string) *AddonPager {
 	return &AddonPager{
+		conn:    p.conn,
 		index:   1,
+		logger:  p.logger,
 		request: p.request.Search(query),
 	}
 }
@@ -122,9 +126,12 @@ func (p *AddonPager) NextPage(ctx context.Context) ([]Addon, bool, error) {
 	}
 
 	for _, addon := range res.Items().Slice() {
-		p.buffer = append(p.buffer, Addon{
-			AddOn: addon,
-		})
+		p.buffer = append(p.buffer,
+			NewAddon(addon,
+				WithConnection{Connection: p.conn},
+				WithLogger{Logger: p.logger},
+			),
+		)
 	}
 
 	if res.Size() < addonPageSize {

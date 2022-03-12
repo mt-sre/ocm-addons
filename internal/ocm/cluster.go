@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/apex/log"
+	"github.com/apex/log/handlers/discard"
 	sdk "github.com/openshift-online/ocm-sdk-go"
+	amv1 "github.com/openshift-online/ocm-sdk-go/accountsmgmt/v1"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	slv1 "github.com/openshift-online/ocm-sdk-go/servicelogs/v1"
 )
@@ -18,32 +20,95 @@ const ocmTimeFormat = "2006-01-02 15:04:05"
 
 var errInstallationNotFound = errors.New("installation not found")
 
+func NewCluster(cluster *cmv1.Cluster, opts ...ClusterOption) Cluster {
+	c := Cluster{
+		cluster: cluster,
+	}
+
+	c.cfg.Option(opts...)
+	c.cfg.Default()
+
+	return c
+}
+
 // Cluster wraps for 'ocm-sdk-go' Cluster objects.
 type Cluster struct {
-	*cmv1.Cluster
-	conn               *sdk.Connection
-	logger             log.Interface
+	cfg                ClusterConfig
+	cluster            *cmv1.Cluster
 	subscription       *Subscription
 	AddonInstallations AddonInstallations
+}
+
+func (c *Cluster) ExternalID() string { return c.cluster.ExternalID() }
+func (c *Cluster) ID() string         { return c.cluster.ID() }
+func (c *Cluster) Name() string       { return c.cluster.Name() }
+
+func (c *Cluster) ProvideRowData() map[string]interface{} {
+	result := map[string]interface{}{
+		"Additional Trust Bundle":          c.cluster.AdditionalTrustBundle(),
+		"API Listening Method":             c.cluster.API().Listening(),
+		"API URL":                          c.cluster.API().URL(),
+		"Billing Model":                    c.cluster.BillingModel(),
+		"CCS Disable SCP Checks":           c.cluster.CCS().DisableSCPChecks(),
+		"CCS Enabled":                      c.cluster.CCS().Enabled(),
+		"CCS ID":                           c.cluster.CCS().ID(),
+		"CloudProvider ID":                 c.cluster.CloudProvider().ID(),
+		"CloudProvider Display Name":       c.cluster.CloudProvider().DisplayName(),
+		"CloudProvider Name":               c.cluster.CloudProvider().Name(),
+		"Console URL":                      c.cluster.Console().URL(),
+		"Creation Timestamp":               c.cluster.CreationTimestamp(),
+		"Disable User Workload Monitoring": c.cluster.DisableUserWorkloadMonitoring(),
+		"Display Name":                     c.cluster.DisplayName(),
+		"DNS Base Domain":                  c.cluster.DNS().BaseDomain(),
+		"ETCD Encryption":                  c.cluster.EtcdEncryption(),
+		"Expiration Timestamp":             c.cluster.ExpirationTimestamp(),
+		"External ID":                      c.cluster.ExternalID(),
+		"FIPS":                             c.cluster.FIPS(),
+		"Health State":                     c.cluster.HealthState(),
+		"ID":                               c.cluster.ID(),
+		"Installed Addons":                 c.installedAddons(),
+		"Load Balancer Qutoa":              c.cluster.LoadBalancerQuota(),
+		"Managed":                          c.cluster.Managed(),
+		"Multi AZ":                         c.cluster.MultiAZ(),
+		"Name":                             c.cluster.Name(),
+		"Network Host Prefix":              c.cluster.Network().HostPrefix(),
+		"Network Machine CIDR":             c.cluster.Network().MachineCIDR(),
+		"Network Pod CIDR":                 c.cluster.Network().PodCIDR(),
+		"Network Service CIDR":             c.cluster.Network().ServiceCIDR(),
+		"Network Type":                     c.cluster.Network().Type(),
+		"OpenShift Version":                c.cluster.OpenshiftVersion(),
+		"Product ID":                       c.cluster.Product().ID(),
+		"Product Name":                     c.cluster.Product().Name(),
+		"HTTP Proxy":                       c.cluster.Proxy().HTTPProxy(),
+		"HTTPS Proxy":                      c.cluster.Proxy().HTTPSProxy(),
+		"State":                            c.cluster.State(),
+		"Subscription ID":                  c.cluster.Subscription().ID(),
+	}
+
+	for k, v := range c.subscription.ProvideRowData() {
+		result[k] = v
+	}
+
+	return result
 }
 
 // WithSubscription attempts to retrieve a subscription object corresponding
 // to the subscription ID included with the cluster. If the subscription
 // cannot be retrieved an error is returned.
 func (c *Cluster) WithSubscription(ctx context.Context) (*Cluster, error) {
-	trace := c.logger.
+	trace := c.cfg.Logger.
 		WithFields(log.Fields{
-			"cluster":      c.ID(),
-			"subscription": c.Subscription().ID(),
+			"cluster":      c.cluster.ID(),
+			"subscription": c.cluster.Subscription().ID(),
 		}).
 		Trace("requesting subscription information")
 	defer trace.Stop(nil)
 
-	sub, err := c.conn.
+	sub, err := c.cfg.Conn.
 		AccountsMgmt().
 		V1().
 		Subscriptions().
-		Subscription(c.Subscription().ID()).
+		Subscription(c.cluster.Subscription().ID()).
 		Get().
 		SendContext(ctx)
 	if err != nil {
@@ -51,7 +116,7 @@ func (c *Cluster) WithSubscription(ctx context.Context) (*Cluster, error) {
 	}
 
 	c.subscription = &Subscription{
-		Subscription: sub.Body(),
+		sub: sub.Body(),
 	}
 
 	return c, nil
@@ -76,7 +141,7 @@ func (c *Cluster) WithAddonInstallations(ctx context.Context) (*Cluster, error) 
 		ids = append(ids, install.ID())
 	}
 
-	addons, err := RetrieveAddons(c.conn, c.logger)
+	addons, err := RetrieveAddons(c.cfg.Conn, c.cfg.Logger)
 	if err != nil {
 		return c, err
 	}
@@ -104,18 +169,18 @@ func (c *Cluster) WithAddonInstallations(ctx context.Context) (*Cluster, error) 
 }
 
 func (c *Cluster) retrieveInstallations(ctx context.Context) ([]*cmv1.AddOnInstallation, error) {
-	trace := c.logger.
+	trace := c.cfg.Logger.
 		WithFields(log.Fields{
-			"cluster": c.ID(),
+			"cluster": c.cluster.ID(),
 		}).
 		Trace("requesting addon installations")
 	defer trace.Stop(nil)
 
-	res, err := c.conn.
+	res, err := c.cfg.Conn.
 		ClustersMgmt().
 		V1().
 		Clusters().
-		Cluster(c.ID()).
+		Cluster(c.cluster.ID()).
 		Addons().
 		List().
 		SendContext(ctx)
@@ -140,14 +205,9 @@ func findInstallationByID(installs []*cmv1.AddOnInstallation, addonID string) (*
 	return nil, fmt.Errorf("finding addon with id %q: %w", addonID, errInstallationNotFound)
 }
 
-// Domain returns the 'BaseDomain' of the cluster.
-func (c *Cluster) Domain() string {
-	return c.DNS().BaseDomain()
-}
-
-// InstalledAddons returns a comma-separated list of installed addons
+// installedAddons returns a comma-separated list of installed addons
 // for the cluster and their status.
-func (c *Cluster) InstalledAddons() string {
+func (c *Cluster) installedAddons() string {
 	displayValues := make([]string, 0, len(c.AddonInstallations))
 
 	for _, install := range c.AddonInstallations {
@@ -160,34 +220,23 @@ func (c *Cluster) InstalledAddons() string {
 	return strings.Join(displayValues, ",")
 }
 
-// Organization returns the Organization ID associated with the
-// subscription for this cluster if the subscription is
-// retrievable and populated.
-func (c *Cluster) Organization() string {
-	if c.subscription == nil {
-		return ""
-	}
-
-	return c.subscription.OrganizationID()
-}
-
 // ProductID returns a string indicating the product type
 // (OSD, ROSA, ARO, ...) and whether the cluster is of the
 // Customer Cloud Subscription (CSS) Model.
 func (c *Cluster) ProductID() string {
 	ccsDisplayValue := "no-ccs"
 
-	if c.CCS().Enabled() {
+	if c.cluster.CCS().Enabled() {
 		ccsDisplayValue = "ccs"
 	}
 
-	return fmt.Sprintf("%s,%s", c.Product().ID(), ccsDisplayValue)
+	return fmt.Sprintf("%s,%s", c.cluster.Product().ID(), ccsDisplayValue)
 }
 
 func (c *Cluster) PostLog(ctx context.Context, opts ...LogEntryOption) error {
-	trace := c.logger.
+	trace := c.cfg.Logger.
 		WithFields(log.Fields{
-			"cluster": c.ID(),
+			"cluster": c.cluster.ID(),
 		}).Trace("posting log entry")
 	defer trace.Stop(nil)
 
@@ -201,7 +250,7 @@ func (c *Cluster) PostLog(ctx context.Context, opts ...LogEntryOption) error {
 		"entrySummary":  ent.Entry.Summary(),
 	}).Debug("generated entry")
 
-	res, err := c.conn.
+	res, err := c.cfg.Conn.
 		ServiceLogs().
 		V1().
 		ClusterLogs().
@@ -222,18 +271,18 @@ func (c *Cluster) PostLog(ctx context.Context, opts ...LogEntryOption) error {
 func (c *Cluster) GetLogs(ctx context.Context, opts GetLogsOptions) ([]LogEntry, error) {
 	query := opts.Query()
 
-	trace := c.logger.
+	trace := c.cfg.Logger.
 		WithFields(log.Fields{
-			"cluster": c.ID(),
+			"cluster": c.cluster.ID(),
 			"query":   query,
 		}).Trace("retrieving cluster log entries")
 	defer trace.Stop(nil)
 
-	res, err := c.conn.
+	res, err := c.cfg.Conn.
 		ServiceLogs().
 		V1().
 		Clusters().
-		Cluster(c.ExternalID()).
+		Cluster(c.cluster.ExternalID()).
 		ClusterLogs().
 		List().
 		Search(query).
@@ -326,5 +375,44 @@ func GetLogsBefore(t time.Time) GetLogsOption {
 func GetLogsAfter(t time.Time) GetLogsOption {
 	return func(g *GetLogsOptions) {
 		g.after = t
+	}
+}
+
+type ClusterConfig struct {
+	Conn   *sdk.Connection
+	Logger log.Interface
+}
+
+func (c *ClusterConfig) Option(opts ...ClusterOption) {
+	for _, opt := range opts {
+		opt.ConfigureCluster(c)
+	}
+}
+
+func (c *ClusterConfig) Default() {
+	if c.Logger == nil {
+		c.Logger = &log.Logger{
+			Handler: discard.New(),
+		}
+	}
+}
+
+type ClusterOption interface {
+	ConfigureCluster(*ClusterConfig)
+}
+
+// Subscription wraps an 'ocm-sdk-go' Subscription object.
+type Subscription struct {
+	sub *amv1.Subscription
+}
+
+func (s *Subscription) ProvideRowData() map[string]interface{} {
+	if s == nil {
+		return map[string]interface{}{}
+	}
+
+	return map[string]interface{}{
+		"Organization ID": s.sub.OrganizationID(),
+		"Support Level":   s.sub.SupportLevel(),
 	}
 }

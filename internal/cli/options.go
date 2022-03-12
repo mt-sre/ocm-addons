@@ -11,6 +11,7 @@ import (
 type CommonOptions struct {
 	Columns   string
 	NoHeaders bool
+	NoColor   bool
 }
 
 func (c *CommonOptions) DefaultColumns(cols string) {
@@ -32,6 +33,15 @@ func (c *CommonOptions) AddNoHeadersFlag(flags *pflag.FlagSet) {
 		"no-headers",
 		c.NoHeaders,
 		"omits header row",
+	)
+}
+
+func (c *CommonOptions) AddNoColorFlag(flags *pflag.FlagSet) {
+	flags.BoolVar(
+		&c.NoColor,
+		"no-color",
+		c.NoColor,
+		"disables colorized output",
 	)
 }
 
