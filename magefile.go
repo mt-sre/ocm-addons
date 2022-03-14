@@ -5,9 +5,9 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 
 	"github.com/magefile/mage/mg"
@@ -16,11 +16,12 @@ import (
 )
 
 var Aliases = map[string]interface{}{
-	"check":   All.Check,
-	"clean":   All.Clean,
-	"test":    All.Test,
-	"install": Build.Install,
-	"release": Release.Full,
+	"check":       All.Check,
+	"clean":       All.Clean,
+	"install":     Build.Install,
+	"release":     Release.Full,
+	"test":        All.Test,
+	"update-deps": All.UpdateDependencies,
 }
 
 type All mg.Namespace
@@ -54,6 +55,17 @@ func (All) Test(ctx context.Context) {
 	)
 }
 
+func (All) UpdateDependencies(ctx context.Context) {
+	mg.CtxDeps(
+		ctx,
+		Deps.UpdateLichen,
+		Deps.UpdateGinkgo,
+		Deps.UpdateGolangCILint,
+		Deps.UpdateGoReleaser,
+		Deps.UpdateOCMCLI,
+	)
+}
+
 var _depBin = path.Join(_dependencyDir, "bin")
 
 var _dependencyDir = func() string {
@@ -77,64 +89,70 @@ var _projectRoot = func() string {
 	return root
 }()
 
-const lockFile = ".mage.lock"
-
-func dependencies() tools.DependencyManifest {
-	return tools.DependencyManifest{
-		Items: []tools.Dependency{
-			{
-				Name:    "lichen",
-				Version: "v0.1.4",
-				Module:  "github.com/uw-labs/lichen",
-			}, {
-				Name:    "golangci-lint",
-				Version: "v1.43.0",
-				Module:  "github.com/golangci/golangci-lint/cmd/golangci-lint",
-			}, {
-				Name:    "ginkgo",
-				Version: "v2.1.1",
-				Module:  "github.com/onsi/ginkgo/v2/ginkgo",
-			}, {
-				Name:    "ocm",
-				Version: "latest",
-				Module:  "github.com/openshift-online/ocm-cli/cmd/ocm",
-			}, {
-				Name:    "goreleaser",
-				Version: "v1.4.1",
-				Module:  "github.com/goreleaser/goreleaser",
-			},
-		},
-	}
-}
-
 type Deps mg.Namespace
 
-// Updates any dependent binaries in the cache.
-func (Deps) Update() error {
-	if err := os.MkdirAll(_dependencyDir, 0o774); err != nil {
+func (Deps) UpdateGinkgo(ctx context.Context) error {
+	return updateDependency(ctx, "github.com/onsi/ginkgo/v2/ginkgo")
+}
+
+func (Deps) UpdateGolangCILint(ctx context.Context) error {
+	return updateDependency(ctx, "github.com/golangci/golangci-lint/cmd/golangci-lint")
+}
+
+func (Deps) UpdateGoReleaser(ctx context.Context) error {
+	return updateDependency(ctx, "github.com/goreleaser/goreleaser")
+}
+
+func (Deps) UpdateLichen(ctx context.Context) error {
+	return updateDependency(ctx, "github.com/uw-labs/lichen")
+}
+
+func (Deps) UpdateOCMCLI(ctx context.Context) error {
+	return updateDependency(ctx, "github.com/openshift-online/ocm-cli/cmd/ocm")
+}
+
+func updateDependency(ctx context.Context, src string) error {
+	if err := os.MkdirAll(_depBin, 0o774); err != nil {
 		return err
 	}
 
-	deps := dependencies()
+	toolsDir := path.Join(_projectRoot, "tools")
 
-	cfg, err := tools.LoadLock(lockFile)
-	if errors.Is(err, os.ErrNotExist) {
-		if err := deps.InstallAll(_depBin); err != nil {
-			return err
-		}
+	tidy := exec.Command("go", "mod", "tidy")
+	tidy.Dir = toolsDir
 
-		return tools.DumpLock(
-			lockFile, tools.NewLock(tools.LockDependencies(dependencies())),
-		)
-	} else if err != nil {
-		return err
+	if comOut, err := tidy.CombinedOutput(); err != nil {
+		fmt.Fprintln(os.Stdout, string(comOut))
+
+		return fmt.Errorf("tidying tools module: %w", err)
 	}
 
-	if err := cfg.Dependencies.Install(_depBin, deps.Difference(cfg.Dependencies)...); err != nil {
-		return err
+	gopath, err := sh.Output(mg.GoCmd(), "env", "GOPATH")
+	if err != nil {
+		return fmt.Errorf("GOPATH cannot be found: %w", err)
 	}
 
-	return tools.DumpLock(lockFile, tools.NewLock(tools.LockDependencies(dependencies())))
+	gocache, err := sh.Output(mg.GoCmd(), "env", "GOCACHE")
+	if err != nil {
+		return fmt.Errorf("GOCACHE cannot be found: %w", err)
+	}
+
+	install := exec.CommandContext(ctx, "go", "install", src)
+	install.Dir = toolsDir
+	install.Env = []string{
+		fmt.Sprintf("GOCACHE=%s", gocache),
+		fmt.Sprintf("GOPATH=%s", gopath),
+		fmt.Sprintf("GOBIN=%s", _depBin),
+		fmt.Sprintf("PATH=%s", os.Getenv("PATH")),
+	}
+
+	if comOut, err := install.CombinedOutput(); err != nil {
+		fmt.Fprintln(os.Stdout, string(comOut))
+
+		return fmt.Errorf("installing command from source %q: %w", src, err)
+	}
+
+	return nil
 }
 
 // Removes any existing dependency binaries
@@ -146,7 +164,9 @@ type Check mg.Namespace
 
 // Runs linter against source code.
 func (Check) Lint(ctx context.Context) error {
-	mg.Deps(Deps.Update)
+	mg.Deps(
+		Deps.UpdateGolangCILint,
+	)
 
 	args := []string{"run"}
 	args = append(args, tools.GoVerboseFlag()...)
@@ -168,7 +188,7 @@ var _binDir = path.Join(_projectRoot, "bin")
 func (Check) License() error {
 	mg.Deps(
 		Build.Install,
-		Deps.Update,
+		Deps.UpdateLichen,
 	)
 
 	lichenConfig := ".lichen.yaml"
@@ -235,7 +255,7 @@ type Release mg.Namespace
 // Generates release artifacts and pushes to SCM.
 func (Release) Full() error {
 	mg.Deps(
-		Deps.Update,
+		Deps.UpdateGoReleaser,
 		Release.Clean,
 	)
 
@@ -245,7 +265,7 @@ func (Release) Full() error {
 // Generates release artifacts locally.
 func (Release) Snapshot() error {
 	mg.Deps(
-		Deps.Update,
+		Deps.UpdateGoReleaser,
 		Release.Clean,
 	)
 
@@ -278,7 +298,10 @@ func (Test) Unit(ctx context.Context) error {
 
 // Runs integration tests.
 func (Test) Integration(ctx context.Context) error {
-	mg.Deps(Deps.Update)
+	mg.Deps(
+		Deps.UpdateGinkgo,
+		Deps.UpdateOCMCLI,
+	)
 
 	args := []string{
 		"-r",
