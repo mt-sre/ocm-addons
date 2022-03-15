@@ -6,8 +6,5 @@ bin/
 *.out
 *.test
 
-# ignore lock file
-.mage.lock
-
 # ignore release artifacts
 dist/

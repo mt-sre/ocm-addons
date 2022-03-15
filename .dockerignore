@@ -3,9 +3,6 @@
 bin/
 dist/
 
-# mage dependency lock
-.mage.lock
-
 # Test binary, build with `go test -c`
 *.test
 
