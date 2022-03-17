@@ -7,8 +7,8 @@ require (
 	github.com/magefile/mage v1.11.0
 	github.com/onsi/ginkgo/v2 v2.1.3
 	github.com/onsi/gomega v1.18.1
-	github.com/openshift-online/ocm-cli v0.1.61
-	github.com/openshift-online/ocm-sdk-go v0.1.241
+	github.com/openshift-online/ocm-cli v0.1.62
+	github.com/openshift-online/ocm-sdk-go v0.1.242
 	github.com/pterm/pterm v0.12.38
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/pflag v1.0.5
