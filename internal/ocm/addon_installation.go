@@ -3,7 +3,6 @@ package ocm
 import (
 	"strings"
 
-	"github.com/mt-sre/ocm-addons/internal/output"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 )
 
@@ -32,20 +31,6 @@ type AddonInstallation struct {
 	addon   *Addon
 }
 
-// ToRowObject presents addon installation data as a record with static fields.
-// This is currently used to make the 'ocm-cli' TableWriter happy as the
-// logic which resolves column names to fields using reflection has trouble
-// with AddonInstallations.
-func (a *AddonInstallation) ToRowObject() *AddonInstallationRowObject {
-	return &AddonInstallationRowObject{
-		AddonID:     a.addon.ID(),
-		AddonName:   a.addon.Name(),
-		ClusterID:   a.cluster.ID(),
-		ClusterName: a.cluster.Name(),
-		State:       string(a.State()),
-	}
-}
-
 type AddonInstallationRowObject struct {
 	AddonID     string
 	AddonName   string
@@ -54,23 +39,18 @@ type AddonInstallationRowObject struct {
 	State       string
 }
 
-func (a *AddonInstallation) ToRow() output.Row {
-	return output.Row{
-		{
-			Name:  "Addon ID",
-			Value: a.addon.ID(),
-		}, {
-			Name:  "Addon Name",
-			Value: a.addon.Name(),
-		}, {
-			Name:  "Cluster ID",
-			Value: a.cluster.ID(),
-		}, {
-			Name:  "Cluster Name",
-			Value: a.cluster.Name(),
-		}, {
-			Name:  "State",
-			Value: a.State(),
-		},
+func (a *AddonInstallation) ProvideRowData() map[string]interface{} {
+	result := map[string]interface{}{
+		"State": a.State(),
 	}
+
+	for k, v := range a.addon.ProvideRowData() {
+		result["Addon "+k] = v
+	}
+
+	for k, v := range a.cluster.ProvideRowData() {
+		result["Cluster "+k] = v
+	}
+
+	return result
 }

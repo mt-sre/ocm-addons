@@ -14,7 +14,7 @@ import (
 func Cmd() *cobra.Command {
 	var opts options
 
-	opts.DefaultColumns("addon_id, addon_name, cluster_id, cluster_name, state")
+	opts.DefaultColumns("addon_id, addon_name, addon_version_id, cluster_id, cluster_name, cluster_state, state")
 
 	return generateCommand(&opts, run(&opts))
 }
@@ -37,6 +37,7 @@ func generateCommand(options *options, run func(*cobra.Command, []string) error)
 	flags := cmd.Flags()
 
 	options.AddColumnsFlag(flags)
+	options.AddNoColorFlag(flags)
 	options.AddNoHeadersFlag(flags)
 
 	return cmd
@@ -53,7 +54,12 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		defer sess.End()
 
-		table, err := setupTable(sess, opts)
+		table, err := output.NewTable(
+			output.WithColumns(opts.Columns),
+			output.WithNoColor(opts.NoColor),
+			output.WithNoHeaders(opts.NoHeaders),
+			output.WithPager(sess.Pager()),
+		)
 		if err != nil {
 			return err
 		}
@@ -104,17 +110,4 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		return nil
 	}
-}
-
-func setupTable(sess cli.Session, opts *options) (*output.Table, error) {
-	tableOpts := []output.TableOption{
-		output.WithColumns(opts.Columns),
-		output.WithNoHeaders(opts.NoHeaders),
-	}
-
-	if pager := sess.Config().Pager(); pager != "" {
-		tableOpts = append(tableOpts, output.WithPager(pager))
-	}
-
-	return output.NewTable(tableOpts...)
 }

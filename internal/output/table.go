@@ -11,6 +11,10 @@ import (
 	"go.uber.org/multierr"
 )
 
+type RowDataProvider interface {
+	ProvideRowData() map[string]interface{}
+}
+
 func NewTable(opts ...TableOption) (*Table, error) {
 	var table Table
 
@@ -22,7 +26,7 @@ func NewTable(opts ...TableOption) (*Table, error) {
 
 		table.pager, err = NewPager(table.cfg.PagerBin, table.cfg.Out)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("starting pager: %w", err)
 		}
 
 		table.cfg.Out = table.pager
@@ -55,16 +59,20 @@ func (t *Table) formattedHeaders() []string {
 	return headers
 }
 
-func (t *Table) Write(r ToRower, mods ...RowModifier) error {
-	row := r.ToRow()
+func (t *Table) Write(r RowDataProvider, mods ...RowModifier) error {
+	row := NewRow(r.ProvideRowData())
 
 	for _, mod := range mods {
 		row = mod(row)
 	}
 
-	processedRow := t.cfg.Selector(row)
+	values := make([]string, 0, len(t.cfg.Columns))
 
-	t.data = append(t.data, processedRow.Values())
+	for _, col := range t.cfg.Columns {
+		values = append(values, row.ValueString(normalize(col)))
+	}
+
+	t.data = append(t.data, values)
 
 	return nil
 }
@@ -86,6 +94,12 @@ func (t *Table) Flush() error {
 }
 
 func (t *Table) flush() error {
+	if t.cfg.NoColor {
+		pterm.DisableColor()
+
+		defer pterm.EnableColor()
+	}
+
 	printer := pterm.DefaultTable.WithData(t.data)
 
 	if !t.cfg.NoHeaders {
@@ -111,15 +125,15 @@ func (t *Table) flush() error {
 type TableConfig struct {
 	Out        io.Writer
 	Columns    []string
-	Selector   FieldSelector
 	HFormatter HeaderFormatter
+	NoColor    bool
 	NoHeaders  bool
 	PagerBin   string
 }
 
 func (c *TableConfig) Option(opts ...TableOption) {
 	for _, opt := range opts {
-		opt.ApplyToTableConfig(c)
+		opt.ConfigureTable(c)
 	}
 }
 
@@ -128,120 +142,84 @@ func (c *TableConfig) Default() {
 		c.Out = os.Stdout
 	}
 
-	if c.Selector == nil {
-		c.Selector = ByName(c.Columns...)
-	}
-
 	if c.HFormatter == nil {
 		c.HFormatter = UpperSnake
 	}
 }
 
 type TableOption interface {
-	ApplyToTableConfig(*TableConfig)
+	ConfigureTable(*TableConfig)
 }
 
 type WithOutput struct{ w io.Writer }
 
-func (wo WithOutput) ApplyToTableConfig(c *TableConfig) {
+func (wo WithOutput) ConfigureTable(c *TableConfig) {
 	c.Out = wo.w
 }
 
 type WithColumns string
 
-func (wc WithColumns) ApplyToTableConfig(c *TableConfig) {
+func (wc WithColumns) ConfigureTable(c *TableConfig) {
 	c.Columns = strings.Split(string(wc), ",")
-}
-
-type WithFieldSelector FieldSelector
-
-func (wf WithFieldSelector) ApplyToTableConfig(c *TableConfig) {
-	c.Selector = FieldSelector(wf)
 }
 
 type WithHeaderFormatter HeaderFormatter
 
-func (wh WithHeaderFormatter) ApplyToTableConfig(c *TableConfig) {
+func (wh WithHeaderFormatter) ConfigureTable(c *TableConfig) {
 	c.HFormatter = HeaderFormatter(wh)
+}
+
+type WithNoColor bool
+
+func (wn WithNoColor) ConfigureTable(c *TableConfig) {
+	c.NoColor = bool(wn)
 }
 
 type WithNoHeaders bool
 
-func (wn WithNoHeaders) ApplyToTableConfig(c *TableConfig) {
+func (wn WithNoHeaders) ConfigureTable(c *TableConfig) {
 	c.NoHeaders = bool(wn)
 }
 
 type WithPager string
 
-func (wp WithPager) ApplyToTableConfig(c *TableConfig) {
+func (wp WithPager) ConfigureTable(c *TableConfig) {
 	c.PagerBin = string(wp)
 }
 
-type ToRower interface {
-	ToRow() Row
-}
+func NewRow(data map[string]interface{}) Row {
+	row := make(Row)
 
-type Row []Field
-
-func (r Row) Values() []string {
-	result := make([]string, 0, len(r))
-
-	for _, f := range r {
-		result = append(result, f.ValueString())
+	for name, val := range data {
+		row.AddField(name, val)
 	}
 
-	return result
+	return row
 }
 
-func (r Row) GetField(name string) Field {
-	for _, f := range r {
-		if normalizedEquals(f.Name, name) {
-			return f
-		}
+type Row map[string]interface{}
+
+func (r Row) AddField(name string, val interface{}) { r[normalize(name)] = val }
+
+func (r Row) ValueString(name string) string {
+	if val, ok := r[normalize(name)]; ok {
+		return fmt.Sprint(val)
 	}
 
-	return Field{}
-}
-
-func normalizedEquals(s1, s2 string) bool {
-	return normalizeString(s1) == normalizeString(s2)
-}
-
-func normalizeString(s string) string {
-	trimmed := strings.TrimSpace(s)
-	snaked := strings.Join(strings.Fields(trimmed), "_")
-
-	return strings.ToLower(snaked)
+	return ""
 }
 
 type RowModifier func(Row) Row
 
-func WithAdditionalFields(fs ...Field) RowModifier {
+func WithAdditionalFields(fields map[string]interface{}) RowModifier {
 	return func(r Row) Row {
-		return append(r, fs...)
-	}
-}
+		row := NewRow(r)
 
-type Field struct {
-	Name  string
-	Value interface{}
-}
-
-func (f *Field) ValueString() string {
-	return fmt.Sprint(f.Value)
-}
-
-type FieldSelector func(Row) Row
-
-func ByName(fieldNames ...string) FieldSelector {
-	return func(r Row) Row {
-		res := make(Row, 0, len(r))
-
-		for _, name := range fieldNames {
-			res = append(res, r.GetField(name))
+		for name, val := range fields {
+			row.AddField(name, val)
 		}
 
-		return res
+		return row
 	}
 }
 
@@ -257,12 +235,12 @@ func UpperSnake(header string) string {
 func NewPager(bin string, out io.Writer) (*Pager, error) {
 	binPath, err := exec.LookPath(bin)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("looking up pager binary: %w", err)
 	}
 
 	pipeOut, pipeIn, err := os.Pipe()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("creating pipe: %w", err)
 	}
 
 	cmd := exec.Command(binPath)
@@ -270,7 +248,7 @@ func NewPager(bin string, out io.Writer) (*Pager, error) {
 	cmd.Stdout = out
 
 	if err := cmd.Start(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("running pager command: %w", err)
 	}
 
 	done := make(chan error, 1)
@@ -300,5 +278,12 @@ func (p *Pager) Close() error {
 	p.pIn.Close()
 	p.pOut.Close()
 	// wait for pager process to stop
-	return <-p.done
+	return fmt.Errorf("waiting for pager: %w", <-p.done)
+}
+
+func normalize(s string) string {
+	trimmed := strings.TrimSpace(s)
+	snaked := strings.Join(strings.Fields(trimmed), "_")
+
+	return strings.ToLower(snaked)
 }

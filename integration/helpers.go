@@ -16,7 +16,7 @@ func MatchRow(values ...interface{}) types.GomegaMatcher {
 		subs = append(subs, `%s`)
 	}
 
-	row := strings.Join(subs, `\s+`)
+	row := strings.Join(subs, `\s*|\s*`)
 
 	return gbytes.Say(row, values...)
 }

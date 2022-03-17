@@ -2,10 +2,10 @@ package info
 
 import (
 	"context"
-	"os"
 
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
+	"github.com/mt-sre/ocm-addons/internal/output"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -14,7 +14,7 @@ import (
 func Cmd() *cobra.Command {
 	var opts options
 
-	opts.DefaultColumns("id, external_id, name, organization, product_id, installed_addons, domain")
+	opts.DefaultColumns("id, external_id, name, organization_id, product_id, installed_addons, dns_base_domain")
 
 	return generateCommand(&opts, run(&opts))
 }
@@ -35,6 +35,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 	flags := cmd.Flags()
 
 	opts.AddColumnsFlag(flags)
+	opts.AddNoColorFlag(flags)
 	opts.AddNoHeadersFlag(flags)
 
 	return cmd
@@ -51,23 +52,17 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		defer sess.End()
 
-		table, err := cli.NewTable(
-			ctx,
-			sess,
-			cli.TableWriter(os.Stdout),
-			cli.TableName("clusters"),
-			cli.TableColumns(opts.Columns),
-			cli.TableNoHeaders(opts.NoHeaders),
+		table, err := output.NewTable(
+			output.WithColumns(opts.Columns),
+			output.WithNoColor(opts.NoColor),
+			output.WithNoHeaders(opts.NoHeaders),
+			output.WithPager(sess.Pager()),
 		)
 		if err != nil {
 			return err
 		}
 
-		defer table.Close()
-
-		if err = table.WriteHeaders(); err != nil {
-			return err
-		}
+		defer table.Flush()
 
 		search := args[0]
 
@@ -97,7 +92,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 				return err
 			}
 
-			if err := table.WriteObject(cluster); err != nil {
+			if err := table.Write(cluster); err != nil {
 				return err
 			}
 

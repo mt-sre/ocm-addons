@@ -50,9 +50,9 @@ type Session struct {
 	logger log.Interface
 }
 
-// Config returns the config loaded for the current session.
-func (s *Session) Config() Config {
-	return s.config
+// Pager returns the pager binary loaded for the current session.
+func (s *Session) Pager() string {
+	return s.config.Pager()
 }
 
 // Conn returns the OCM connection for the current session.

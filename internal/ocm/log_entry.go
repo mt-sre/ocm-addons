@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mt-sre/ocm-addons/internal/output"
 	slv1 "github.com/openshift-online/ocm-sdk-go/servicelogs/v1"
 )
 
@@ -37,18 +36,18 @@ type LogEntry struct {
 	Entry *slv1.LogEntry
 }
 
-func (l *LogEntry) ToRow() output.Row {
+func (l *LogEntry) ProvideRowData() map[string]interface{} {
 	severity := strings.ToUpper(string(l.Entry.Severity()))
 
-	return output.Row{
-		{Name: "timestamp", Value: l.Entry.Timestamp()},
-		{Name: "cluster_uuid", Value: l.Entry.ClusterUUID()},
-		{Name: "description", Value: l.Entry.Description()},
-		{Name: "id", Value: l.Entry.ID()},
-		{Name: "service_name", Value: l.Entry.ServiceName()},
-		{Name: "severity", Value: severity},
-		{Name: "summary", Value: l.Entry.Summary()},
-		{Name: "username", Value: l.Entry.Username()},
+	return map[string]interface{}{
+		"timestamp":    l.Entry.Timestamp(),
+		"cluster_uuid": l.Entry.ClusterUUID(),
+		"description":  l.Entry.Description(),
+		"id":           l.Entry.ID(),
+		"service_name": l.Entry.ServiceName(),
+		"severity":     severity,
+		"summary":      l.Entry.Summary(),
+		"username":     l.Entry.Username(),
 	}
 }
 

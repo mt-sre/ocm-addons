@@ -59,6 +59,11 @@ func TestCmdOptions(t *testing.T) {
 			args:    []string{"--no-headers", "fake-cluster-name"},
 			reports: []interface{}{"should execute successfully"},
 		},
+		"no color flag": {
+			command: mockCommand(),
+			args:    []string{"--no-color", "fake-cluster-name"},
+			reports: []interface{}{"should execute successfully"},
+		},
 		"columns flag with no arguments": {
 			command:     mockCommand(),
 			args:        []string{"--columns"},

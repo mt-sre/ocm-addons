@@ -84,6 +84,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 	flags := cmd.Flags()
 
 	opts.AddColumnsFlag(flags)
+	opts.AddNoColorFlag(flags)
 	opts.AddNoHeadersFlag(flags)
 	opts.AddOrderFlag(flags)
 	opts.AddLevelFlag(flags)
@@ -107,17 +108,12 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		defer sess.End()
 
-		tableOpts := []output.TableOption{
+		table, err := output.NewTable(
 			output.WithColumns(opts.Columns),
-		}
-
-		if pager := sess.Config().Pager(); pager != "" {
-			tableOpts = append(tableOpts, output.WithPager(pager))
-		}
-
-		tableOpts = append(tableOpts, output.WithNoHeaders(opts.NoHeaders))
-
-		table, err := output.NewTable(tableOpts...)
+			output.WithNoHeaders(opts.NoHeaders),
+			output.WithNoColor(opts.NoColor),
+			output.WithPager(sess.Pager()),
+		)
 		if err != nil {
 			return err
 		}

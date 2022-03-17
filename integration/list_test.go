@@ -85,7 +85,7 @@ var _ = Describe("list subcommand", func() {
 	})
 
 	Describe("using default behavior", func() {
-		Context("with 99 addons", func() {
+		Context("with 100 addons", func() {
 			It("should write multiple pages of addons as a table", func() {
 				pluginCommand := exec.Command(
 					_pluginPath, "list",
@@ -108,7 +108,7 @@ var _ = Describe("list subcommand", func() {
 })
 
 func setupEnv() (*OCMEnvironment, error) {
-	addons, err := generateAddOns(99)
+	addons, err := generateAddOns(100)
 	if err != nil {
 		return nil, err
 	}
