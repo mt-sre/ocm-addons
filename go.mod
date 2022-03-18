@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/apex/log v1.9.0
-	github.com/magefile/mage v1.11.0
+	github.com/magefile/mage v1.13.0
 	github.com/onsi/ginkgo/v2 v2.1.3
 	github.com/onsi/gomega v1.18.1
 	github.com/openshift-online/ocm-cli v0.1.62
