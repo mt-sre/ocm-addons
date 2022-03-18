@@ -10,7 +10,7 @@ require (
 	github.com/openshift-online/ocm-cli v0.1.62
 	github.com/openshift-online/ocm-sdk-go v0.1.242
 	github.com/pterm/pterm v0.12.38
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/multierr v1.8.0
@@ -29,6 +29,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gookit/color v1.4.2 // indirect
 	github.com/gorilla/css v1.0.0 // indirect

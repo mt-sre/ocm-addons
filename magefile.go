@@ -202,7 +202,11 @@ func (Check) License() error {
 // Ensures dependencies are correctly updated in the 'go.mod'
 // and 'go.sum' files.
 func (Check) Tidy() error {
-	return sh.Run("go", "mod", "tidy")
+	if err := sh.Run("go", "mod", "tidy", "-go=1.16"); err != nil {
+		return fmt.Errorf("tidying go 1.16 dependencies: %w", err)
+	}
+
+	return sh.Run("go", "mod", "tidy", "-go=1.17")
 }
 
 // Ensures package dependencies have not been tampered with since download.
