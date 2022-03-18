@@ -1,13 +1,14 @@
 package notification
 
 import (
+	"strings"
 	"testing"
 	"testing/fstest"
 
 	"github.com/mt-sre/ocm-addons/internal/output"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func TestGetTeams(t *testing.T) {
@@ -45,24 +46,34 @@ func TestGetNotification(t *testing.T) {
 	cfg, ok := tree.GetNotification("test-team", "test-product", "test-notification")
 	assert.True(t, ok)
 	assert.Equal(t, "TestNotificationSummary", cfg.Summary)
+	assert.Equal(t, "Test", cfg.Description)
+	assert.Equal(t, "Error", cfg.Severity)
+	assert.Equal(t, "SREManualAction", cfg.ServiceName)
+	assert.Equal(t, false, cfg.InternalOnly)
 }
-
-const _testConfig = `
----
-test-notification:
-  summary: "TestNotificationSummary"
-`
 
 func setupTestFS(t *testing.T) fstest.MapFS {
 	t.Helper()
 
 	result := fstest.MapFS{
 		"data/test-team/test-product.yaml": {
-			Data: []byte(_testConfig),
+			Data: []byte(validConfig()),
 		},
 	}
 
 	return result
+}
+
+func validConfig() string {
+	result := []string{
+		"---",
+		"test-notification:",
+		"  summary: TestNotificationSummary",
+		"  description: Test",
+		"  severity: Error",
+	}
+
+	return strings.Join(result, "\n")
 }
 
 func TestBadConfigs(t *testing.T) {
@@ -72,13 +83,16 @@ func TestBadConfigs(t *testing.T) {
 		Data string
 	}{
 		"top-level list": {
-			Data: `---\n- test-notification:\n    summary: "TestNotificationSummary"\n`,
+			Data: topLevelList(),
 		},
 		"top-level object": {
-			Data: `---\nsummary: "TestNotificationSummary"\n`,
+			Data: topLevelObject(),
 		},
 		"invalid type": {
-			Data: `---\ntest-notification:\n  internalOnly: arbitrary_string\n`,
+			Data: invalidType(),
+		},
+		"invalid description": {
+			Data: invalidDescription(),
 		},
 	} {
 		tc := tc
@@ -92,10 +106,58 @@ func TestBadConfigs(t *testing.T) {
 				},
 			}
 
-			_, err := loadNotifications(badFS)
-			assert.Error(t, err)
+			tree, err := loadNotifications(badFS)
+			assert.Error(t, err, tree)
 		})
 	}
+}
+
+func topLevelList() string {
+	result := []string{
+		"---",
+		"- test-notification:",
+		"    summary: TestNotificationSummary",
+		"    description: Test",
+		"    severity: Error",
+	}
+
+	return strings.Join(result, "\n")
+}
+
+func topLevelObject() string {
+	result := []string{
+		"---",
+		"summary: TestNotificationSummary",
+		"description: Test",
+		"severity: Error",
+	}
+
+	return strings.Join(result, "\n")
+}
+
+func invalidType() string {
+	result := []string{
+		"---",
+		"test-notification:",
+		"  summary: TestNotificationSummary",
+		"  description: Test",
+		"  severity: Error",
+		"  internalOnly: some_string",
+	}
+
+	return strings.Join(result, "\n")
+}
+
+func invalidDescription() string {
+	result := []string{
+		"---",
+		"test-notification:",
+		"  summary: TestNotificationSummary",
+		"  description: Test!",
+		"  severity: Error",
+	}
+
+	return strings.Join(result, "\n")
 }
 
 func TestConfigInterfaces(t *testing.T) {

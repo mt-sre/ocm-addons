@@ -9,8 +9,26 @@ import (
 	"regexp"
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	"github.com/go-playground/validator/v10"
+	"gopkg.in/yaml.v3"
 )
+
+var _validator = validator.New()
+
+func init() { //nolint:gochecknoinits
+	endsWithAlNumRE := regexp.MustCompile(`\w$`)
+
+	if err := _validator.RegisterValidation(
+		"ends-with-alnum", MatchesPattern(endsWithAlNumRE)); err != nil {
+		panic(err)
+	}
+}
+
+func MatchesPattern(pattern *regexp.Regexp) validator.Func {
+	return func(fl validator.FieldLevel) bool {
+		return pattern.MatchString(fl.Field().String())
+	}
+}
 
 // ConfigTree abstracts notification configs loaded from a filesystem.
 type ConfigTree map[string]map[string]map[string]Config
@@ -175,7 +193,7 @@ func loadNotifications(dataDir fs.ReadDirFS) (ConfigTree, error) {
 
 		teamNotifications, err := loadTeamConfigDirectory(subFS)
 		if err != nil {
-			return nil, fmt.Errorf("loading team config directory: %w", err)
+			return nil, fmt.Errorf("loading team config directory %q: %w", teamName, err)
 		}
 
 		result[teamName] = teamNotifications
@@ -206,7 +224,7 @@ func getTeamDirectiories(rootDir fs.ReadDirFS) ([]fs.DirEntry, error) {
 func loadTeamConfigDirectory(dir fs.FS) (map[string]map[string]Config, error) {
 	ents, err := fs.ReadDir(dir, ".")
 	if err != nil {
-		return nil, fmt.Errorf("reading team directory:%w", err)
+		return nil, fmt.Errorf("reading team directory: %w", err)
 	}
 
 	extPat := regexp.MustCompile(`^.*\.ya?ml$`)
@@ -249,7 +267,13 @@ func loadConfigFile(f fs.File) (map[string]Config, error) {
 	result := make(map[string]Config)
 
 	if err := yaml.Unmarshal(data, &result); err != nil {
-		return result, fmt.Errorf("unmarshalling config yaml: %w", err)
+		return nil, fmt.Errorf("unmarshalling config yaml: %w", err)
+	}
+
+	for id, cfg := range result {
+		if err := _validator.Struct(cfg); err != nil {
+			return nil, fmt.Errorf("validating config %q: %w", id, err)
+		}
 	}
 
 	return result, nil
@@ -259,23 +283,23 @@ func loadConfigFile(f fs.File) (map[string]Config, error) {
 // notification. Any changes to this struct should be
 // updated in './data/README.md'.
 type Config struct {
-	Description  string
-	InternalOnly bool
-	ServiceName  string
-	Severity     string
-	Summary      string
+	Description  string `validate:"required,ends-with-alnum"`
+	InternalOnly bool   `yaml:"internalOnly"`
+	ServiceName  string `yaml:"serviceName"`
+	Severity     string `validate:"required,oneof=Debug Error Fatal Info Warning"`
+	Summary      string `validate:"required"`
 }
 
 const defaultServiceName = "SREManualAction"
 
-func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (c *Config) UnmarshalYAML(value *yaml.Node) error {
 	type rawConfig Config
 
 	raw := rawConfig{
 		ServiceName: defaultServiceName,
 	}
 
-	if err := unmarshal(&raw); err != nil {
+	if err := value.Decode(&raw); err != nil {
 		return fmt.Errorf("unmarshalling raw notification config: %w", err)
 	}
 
