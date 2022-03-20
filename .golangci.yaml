@@ -27,6 +27,8 @@ linters:
   - ireturn
   # Does not support map[string]testcase style subtests.
   - paralleltest
+  # Ineffective for foreign schemas
+  - tagliatelle
   # Tests cannot be blackboxed.
   - testpackage
   # Annoying

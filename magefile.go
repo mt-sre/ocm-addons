@@ -5,10 +5,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -63,6 +65,7 @@ func (All) UpdateDependencies(ctx context.Context) {
 		Deps.UpdateGolangCILint,
 		Deps.UpdateGoReleaser,
 		Deps.UpdateOCMCLI,
+		Deps.UpdatePreCommit,
 	)
 }
 
@@ -92,28 +95,28 @@ var _projectRoot = func() string {
 type Deps mg.Namespace
 
 func (Deps) UpdateGinkgo(ctx context.Context) error {
-	return updateDependency(ctx, "github.com/onsi/ginkgo/v2/ginkgo")
+	return updateGODependency(ctx, "github.com/onsi/ginkgo/v2/ginkgo")
 }
 
 func (Deps) UpdateGolangCILint(ctx context.Context) error {
-	return updateDependency(ctx, "github.com/golangci/golangci-lint/cmd/golangci-lint")
+	return updateGODependency(ctx, "github.com/golangci/golangci-lint/cmd/golangci-lint")
 }
 
 func (Deps) UpdateGoReleaser(ctx context.Context) error {
-	return updateDependency(ctx, "github.com/goreleaser/goreleaser")
+	return updateGODependency(ctx, "github.com/goreleaser/goreleaser")
 }
 
 func (Deps) UpdateLichen(ctx context.Context) error {
-	return updateDependency(ctx, "github.com/uw-labs/lichen")
+	return updateGODependency(ctx, "github.com/uw-labs/lichen")
 }
 
 func (Deps) UpdateOCMCLI(ctx context.Context) error {
-	return updateDependency(ctx, "github.com/openshift-online/ocm-cli/cmd/ocm")
+	return updateGODependency(ctx, "github.com/openshift-online/ocm-cli/cmd/ocm")
 }
 
-func updateDependency(ctx context.Context, src string) error {
-	if err := os.MkdirAll(_depBin, 0o774); err != nil {
-		return err
+func updateGODependency(ctx context.Context, src string) error {
+	if err := setupDepsBin(); err != nil {
+		return fmt.Errorf("creating dependencies bin directory: %w", err)
 	}
 
 	toolsDir := path.Join(_projectRoot, "tools")
@@ -153,6 +156,39 @@ func updateDependency(ctx context.Context, src string) error {
 	}
 
 	return nil
+}
+
+func (Deps) UpdatePreCommit(ctx context.Context) error {
+	if err := setupDepsBin(); err != nil {
+		return fmt.Errorf("creating dependencies bin directory: %w", err)
+	}
+
+	const urlPrefix = "https://github.com/pre-commit/pre-commit/releases/download"
+
+	version, err := tools.GetLatestTag(ctx, "pre-commit", "pre-commit")
+	if err != nil {
+		return fmt.Errorf("retrieving latest pre-commit release: %w", err)
+	}
+
+	version = strings.TrimPrefix(version, "v")
+
+	out := path.Join(_depBin, "pre-commit")
+
+	if _, err := os.Stat(out); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("inspecting output location %q: %w", out, err)
+		}
+
+		if err := tools.DownloadFile(ctx, urlPrefix+fmt.Sprintf("/v%s/pre-commit-%s.pyz", version, version), out); err != nil {
+			return fmt.Errorf("downloading pre-commit: %w", err)
+		}
+	}
+
+	return os.Chmod(out, 0775)
+}
+
+func setupDepsBin() error {
+	return os.MkdirAll(_depBin, 0o774)
 }
 
 // Removes any existing dependency binaries
@@ -322,3 +358,51 @@ func (Test) Integration(ctx context.Context) error {
 
 	return sh.Run(path.Join(_depBin, "ginkgo"), args...)
 }
+
+type Hooks mg.Namespace
+
+func (Hooks) Enable() error {
+	mg.Deps(Deps.UpdatePreCommit)
+
+	if err := precommit("install"); err != nil {
+		return fmt.Errorf("installing pre-commit hooks: %w", err)
+	}
+
+	if err := precommit("install", "--hook-type", "pre-push"); err != nil {
+		return fmt.Errorf("installing pre-push hooks: %w", err)
+	}
+
+	return nil
+}
+
+func (Hooks) Disable() error {
+	mg.Deps(Deps.UpdatePreCommit)
+
+	if err := precommit("uninstall"); err != nil {
+		return fmt.Errorf("uninstalling all hooks: %w", err)
+	}
+
+	return nil
+}
+
+func (Hooks) Run() error {
+	mg.Deps(Deps.UpdatePreCommit)
+
+	if err := precommit("run", "--show-diff-on-failure"); err != nil {
+		return fmt.Errorf("running hooks: %w", err)
+	}
+
+	return nil
+}
+
+func (Hooks) RunAllFiles() error {
+	mg.Deps(Deps.UpdatePreCommit)
+
+	if err := precommit("run", "--all-files"); err != nil {
+		return fmt.Errorf("running hooks: %w", err)
+	}
+
+	return nil
+}
+
+var precommit = sh.RunCmd(path.Join(_depBin, "pre-commit"))
