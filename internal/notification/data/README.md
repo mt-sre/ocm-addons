@@ -41,7 +41,7 @@ The full list of configurable fields are as follows:
 |description |A complete description of the alert which will also be sent to the customer via email|N/A              |
 |internalOnly|Whether the log entry will be visible to customers                                   |false            |
 |serviceName |The service which created the log entry                                              |"SREManualAction"|
-|severity    |The severity level (debug, error, fatal, info, warning)                              |N/A              |
+|severity    |The severity level (`Debug`, `Error`, `Fatal`, `Info`, `Warning`)                    |N/A              |
 |summary     |Brief description of the alert                                                       |N/A              |
 
 ## FAQ
@@ -50,4 +50,4 @@ The full list of configurable fields are as follows:
 
 The description field is sent to the cluster owner in the body of a notification email.
 When formatted as an email a trailing period is automatically added so the configured
-description should not end with any punctuation.
+description should not end with any punctuation or whitespace.
