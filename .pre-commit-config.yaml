@@ -1,4 +1,7 @@
 ---
+default_stages:
+  - commit
+  - merge-commit
 repos:
 # Fixers
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -68,5 +71,18 @@ repos:
     entry: ./mage check:license
     language: system
     files: '(\bgo\.mod$)|(\.lichen\.ya?ml$)'
+    pass_filenames: false
+    require_serial: true
+
+
+# Pre-Push
+- repo: local
+  hooks:
+  - id: test
+    name: test
+    entry: ./mage test
+    language: system
+    stages: [push]
+    always_run: true
     pass_filenames: false
     require_serial: true
