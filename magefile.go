@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -84,13 +84,16 @@ var _projectRoot = func() string {
 		return root
 	}
 
-	root, err := sh.Output("git", "rev-parse", "--show-toplevel")
-	if err != nil {
+	topLevel := git(tools.WithArgs{"rev-parse", "--show-toplevel"})
+
+	if err := topLevel.Run(); err != nil || !topLevel.Success() {
 		panic("failed to get working directory")
 	}
 
-	return root
+	return strings.TrimSpace(topLevel.Stdout())
 }()
+
+var git = tools.NewCommandAlias("git")
 
 type Deps mg.Namespace
 
@@ -121,42 +124,42 @@ func updateGODependency(ctx context.Context, src string) error {
 
 	toolsDir := filepath.Join(_projectRoot, "tools")
 
-	tidy := exec.Command("go", "mod", "tidy")
-	tidy.Dir = toolsDir
+	tidy := gocmd(
+		tools.WithArgs{"mod", "tidy"},
+		tools.WithWorkingDirectory(toolsDir),
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
 
-	if comOut, err := tidy.CombinedOutput(); err != nil {
-		fmt.Fprintln(os.Stdout, string(comOut))
-
-		return fmt.Errorf("tidying tools module: %w", err)
+	if err := tidy.Run(); err != nil {
+		return fmt.Errorf("starting to tidy tools dir: %w", err)
 	}
 
-	gopath, err := sh.Output(mg.GoCmd(), "env", "GOPATH")
-	if err != nil {
-		return fmt.Errorf("GOPATH cannot be found: %w", err)
+	if !tidy.Success() {
+		return fmt.Errorf("tidying tools dir: %w", tidy.Error())
 	}
 
-	gocache, err := sh.Output(mg.GoCmd(), "env", "GOCACHE")
-	if err != nil {
-		return fmt.Errorf("GOCACHE cannot be found: %w", err)
+	install := gocmd(
+		tools.WithArgs{"install", src},
+		tools.WithWorkingDirectory(toolsDir),
+		tools.WithCurrentEnv(true),
+		tools.WithEnv{"GOBIN": _depBin},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := install.Run(); err != nil {
+		return fmt.Errorf("starting to install command from source %q: %w", src, err)
 	}
 
-	install := exec.CommandContext(ctx, "go", "install", src)
-	install.Dir = toolsDir
-	install.Env = []string{
-		fmt.Sprintf("GOCACHE=%s", gocache),
-		fmt.Sprintf("GOPATH=%s", gopath),
-		fmt.Sprintf("GOBIN=%s", _depBin),
-		fmt.Sprintf("PATH=%s", os.Getenv("PATH")),
-	}
-
-	if comOut, err := install.CombinedOutput(); err != nil {
-		fmt.Fprintln(os.Stdout, string(comOut))
-
-		return fmt.Errorf("installing command from source %q: %w", src, err)
+	if !install.Success() {
+		return fmt.Errorf("installing command from source %q: %w", src, install.Error())
 	}
 
 	return nil
 }
+
+var gocmd = tools.NewCommandAlias(mg.GoCmd())
 
 func (Deps) UpdatePreCommit(ctx context.Context) error {
 	if err := setupDepsBin(); err != nil {
@@ -196,20 +199,31 @@ type Check mg.Namespace
 
 // Runs linter against source code.
 func (Check) Lint(ctx context.Context) error {
-	mg.Deps(
+	mg.CtxDeps(
+		ctx,
 		Deps.UpdateGolangCILint,
 	)
 
-	args := []string{"run"}
-	args = append(args, tools.GoVerboseFlag()...)
-	args = append(args, tools.GoTimeoutFlag(ctx)...)
+	run := golancilint(
+		tools.WithArgs{"run"},
+		tools.WithArgs(tools.GoVerboseFlag()),
+		tools.WithContext{Context: ctx},
+	)
 
-	out, err := sh.Output(filepath.Join(_depBin, "golangci-lint"), args...)
+	if err := run.Run(); err != nil {
+		return fmt.Errorf("starting linter: %w", err)
+	}
 
-	fmt.Print(out)
+	if run.Success() {
+		return nil
+	}
 
-	return err
+	fmt.Fprint(os.Stdout, run.CombinedOutput())
+
+	return fmt.Errorf("running linter: %w", run.Error())
 }
+
+var golancilint = tools.NewCommandAlias(filepath.Join(_depBin, "golangci-lint"))
 
 const binOut = "ocm-addons"
 
@@ -217,33 +231,86 @@ var _binDir = filepath.Join(_projectRoot, "bin")
 
 // Scans imported go packages and ensures they are compatible with
 // this repository's license (Apache 2.0).
-func (Check) License() error {
-	mg.Deps(
+func (Check) License(ctx context.Context) error {
+	mg.CtxDeps(
+		ctx,
 		Build.Plugin,
 		Deps.UpdateLichen,
 	)
 
 	lichenConfig := ".lichen.yaml"
 
-	return sh.Run(
-		filepath.Join(_depBin, "lichen"),
-		"-c", filepath.Join(_projectRoot, lichenConfig),
-		filepath.Join(_binDir, binOut))
+	licenseCheck := lichen(
+		tools.WithArgs{
+			"-c", filepath.Join(_projectRoot, lichenConfig),
+			filepath.Join(_binDir, binOut),
+		},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := licenseCheck.Run(); err != nil {
+		return fmt.Errorf("starting license check: %w", err)
+	}
+
+	if licenseCheck.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("running license check: %w", licenseCheck.Error())
 }
+
+var lichen = tools.NewCommandAlias(filepath.Join(_depBin, "lichen"))
 
 // Ensures dependencies are correctly updated in the 'go.mod'
 // and 'go.sum' files.
-func (Check) Tidy() error {
-	if err := sh.Run("go", "mod", "tidy", "-go=1.16"); err != nil {
-		return fmt.Errorf("tidying go 1.16 dependencies: %w", err)
+func (Check) Tidy(ctx context.Context) error {
+	if err := tidyVersion(ctx, "1.16"); err != nil {
+		return fmt.Errorf("tidying go.mod: %w", err)
 	}
 
-	return sh.Run("go", "mod", "tidy", "-go=1.17")
+	if err := tidyVersion(ctx, "1.17"); err != nil {
+		return fmt.Errorf("tidying go.mod: %w", err)
+	}
+
+	return nil
+}
+
+func tidyVersion(ctx context.Context, version string) error {
+	tidy := gocmd(
+		tools.WithArgs{"mod", "tidy", "-go=" + version},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := tidy.Run(); err != nil {
+		return fmt.Errorf("starting to tidy go %s dependencies: %w", version, err)
+	}
+
+	if tidy.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("tidying go %s dependencies: %w", version, tidy.Error())
 }
 
 // Ensures package dependencies have not been tampered with since download.
-func (Check) Verify() error {
-	return sh.Run("go", "mod", "verify")
+func (Check) Verify(ctx context.Context) error {
+	verify := gocmd(
+		tools.WithArgs{"mod", "verify"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := verify.Run(); err != nil {
+		return fmt.Errorf("starting to verify go dependencies: %w", err)
+	}
+
+	if verify.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("verifying go dependencies: %w", verify.Error())
 }
 
 type Build mg.Namespace
@@ -251,27 +318,51 @@ type Build mg.Namespace
 // Copies plug-in binary to "$GOPATH/bin".
 // If "$GOPATH/bin" is in the PATH then the plug-in
 // can be invoked using "ocm addons"
-func (Build) Install() error {
-	return sh.Run("go", "install", filepath.Join(_projectRoot, "cmd", "ocm-addons"))
+func (Build) Install(ctx context.Context) error {
+	install := gocmd(
+		tools.WithArgs{
+			"install", filepath.Join(_projectRoot, "cmd", "ocm-addons"),
+		},
+	)
+
+	if err := install.Run(); err != nil {
+		return fmt.Errorf("starting to install plugin: %w", err)
+	}
+
+	if install.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("installing plugin: %w", install.Error())
 }
 
 // Compiles top-level 'ocm-addons' command as an executable binary.
 // The binary can be used stand-alone or added to a directory in
 // the system PATH to work as a plug-in with 'ocm'.
-func (Build) Plugin() error {
+func (Build) Plugin(ctx context.Context) error {
 	mg.Deps(Build.Clean)
 
-	var goVars = map[string]string{
-		"CGO_ENABLED": "0",
+	build := gocmd(
+		tools.WithArgs{
+			"build",
+			"-o", filepath.Join(_binDir, binOut),
+			filepath.Join(_projectRoot, "cmd", "ocm-addons"),
+		},
+		tools.WithCurrentEnv(true),
+		tools.WithEnv{"CGO_ENABLED": "0"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := build.Run(); err != nil {
+		return fmt.Errorf("starting to build plugin: %w", err)
 	}
 
-	runWithGoVars := tools.ApplyEnv(goVars)
+	if build.Success() {
+		return nil
+	}
 
-	return runWithGoVars(
-		"go", "build",
-		"-o", filepath.Join(_binDir, binOut),
-		"./cmd/ocm-addons",
-	)
+	return fmt.Errorf("building plugin: %w", build.Error())
 }
 
 // Removes built binaries if they already exist.
@@ -282,24 +373,56 @@ func (Build) Clean() error {
 type Release mg.Namespace
 
 // Generates release artifacts and pushes to SCM.
-func (Release) Full() error {
-	mg.Deps(
+func (Release) Full(ctx context.Context) error {
+	mg.CtxDeps(
+		ctx,
 		Deps.UpdateGoReleaser,
 		Release.Clean,
 	)
 
-	return sh.Run(filepath.Join(_depBin, "goreleaser"), "release", "--rm-dist")
+	release := goreleaser(
+		tools.WithArgs{"release", "--rm-dist"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := release.Run(); err != nil {
+		return fmt.Errorf("starting release: %w", err)
+	}
+
+	if release.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("releasing plugin: %w", release.Error())
 }
 
 // Generates release artifacts locally.
-func (Release) Snapshot() error {
-	mg.Deps(
+func (Release) Snapshot(ctx context.Context) error {
+	mg.CtxDeps(
+		ctx,
 		Deps.UpdateGoReleaser,
 		Release.Clean,
 	)
 
-	return sh.Run(filepath.Join(_depBin, "goreleaser"), "release", "--snapshot")
+	release := goreleaser(
+		tools.WithArgs{"release", "--snapshot"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := release.Run(); err != nil {
+		return fmt.Errorf("starting release snapshot: %w", err)
+	}
+
+	if release.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("releasing snapshot: %w", release.Error())
 }
+
+var goreleaser = tools.NewCommandAlias("goreleaser")
 
 func (Release) Clean() error {
 	return sh.Rm(filepath.Join(_projectRoot, "dist"))
@@ -309,92 +432,149 @@ type Test mg.Namespace
 
 // Runs unit tests.
 func (Test) Unit(ctx context.Context) error {
-	args := []string{"test", "-race"}
+	test := gocmd(
+		tools.WithArgs{"test", "-race"},
+		tools.WithArgs(tools.GoVerboseFlag()),
+		tools.WithArgs{"./cmd/...", "./internal/..."},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
 
-	args = append(args, tools.GoVerboseFlag()...)
-	args = append(args, tools.GoTimeoutFlag(ctx)...)
-
-	targetDirs := []string{
-		"./cmd",
-		"./internal",
+	if err := test.Run(); err != nil {
+		return fmt.Errorf("starting unit tests: %w", err)
 	}
-	for _, dir := range targetDirs {
-		args = append(args, fmt.Sprintf("%s/...", dir))
+
+	if test.Success() {
+		return nil
 	}
 
-	return sh.Run("go", args...)
+	return fmt.Errorf("running unit tests: %w", test.Error())
 }
 
 // Runs integration tests.
 func (Test) Integration(ctx context.Context) error {
-	mg.Deps(
+	mg.CtxDeps(
+		ctx,
 		Deps.UpdateGinkgo,
 		Deps.UpdateOCMCLI,
 	)
 
-	args := []string{
-		"-r",
-		"--randomize-all",
-		"--randomize-suites",
-		"--fail-on-pending",
-		"--keep-going",
-		"--race",
-		"--trace",
-	}
-	args = append(args, tools.GoVerboseFlag()...)
-	args = append(args, tools.GoTimeoutFlag(ctx)...)
-	args = append(args, "integration")
+	test := ginkgo(
+		tools.WithArgs{
+			"-r",
+			"--randomize-all",
+			"--randomize-suites",
+			"--fail-on-pending",
+			"--keep-going",
+			"--race",
+			"--trace",
+		},
+		tools.WithArgs(tools.GoVerboseFlag()),
+		tools.WithArgs{"integration"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
 
-	return sh.Run(filepath.Join(_depBin, "ginkgo"), args...)
+	if err := test.Run(); err != nil {
+		return fmt.Errorf("starting integration tests: %w", err)
+	}
+
+	if test.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("running integration tests: %w", test.Error())
 }
+
+var ginkgo = tools.NewCommandAlias(filepath.Join(_depBin, "ginkgo"))
 
 type Hooks mg.Namespace
 
-func (Hooks) Enable() error {
-	mg.Deps(Deps.UpdatePreCommit)
+func (Hooks) Enable(ctx context.Context) error {
+	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
-	if err := precommit("install"); err != nil {
-		return fmt.Errorf("installing pre-commit hooks: %w", err)
+	install := precommit(
+		tools.WithArgs{
+			"install",
+			"--hook-type", "pre-commit",
+			"--hook-type", "pre-push",
+		},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := install.Run(); err != nil {
+		return fmt.Errorf("starting to install pre-commit hooks: %w", err)
 	}
 
-	if err := precommit("install", "--hook-type", "pre-push"); err != nil {
-		return fmt.Errorf("installing pre-push hooks: %w", err)
+	if install.Success() {
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("installing pre-commit hooks: %w", install.Error())
 }
 
-func (Hooks) Disable() error {
-	mg.Deps(Deps.UpdatePreCommit)
+func (Hooks) Disable(ctx context.Context) error {
+	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
-	if err := precommit("uninstall"); err != nil {
-		return fmt.Errorf("uninstalling all hooks: %w", err)
+	uninstall := precommit(
+		tools.WithArgs{"uninstall"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := uninstall.Run(); err != nil {
+		return fmt.Errorf("starting to disable hooks: %w", err)
 	}
 
-	return nil
-}
-
-func (Hooks) Run() error {
-	mg.Deps(Deps.UpdatePreCommit)
-
-	if err := precommit("run",
-		"--show-diff-on-failure",
-		"--from-ref", "origin/main", "--to-ref", "HEAD",
-	); err != nil {
-		return fmt.Errorf("running hooks: %w", err)
+	if uninstall.Success() {
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("disabling hooks: %w", uninstall.Error())
 }
 
-func (Hooks) RunAllFiles() error {
-	mg.Deps(Deps.UpdatePreCommit)
+func (Hooks) Run(ctx context.Context) error {
+	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
-	if err := precommit("run", "--all-files"); err != nil {
-		return fmt.Errorf("running hooks: %w", err)
+	run := precommit(
+		tools.WithArgs{"run",
+			"--show-diff-on-failure",
+			"--from-ref", "origin/main", "--to-ref", "HEAD",
+		},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := run.Run(); err != nil {
+		return fmt.Errorf("starting to run hooks: %w", err)
 	}
 
-	return nil
+	if run.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("running hooks: %w", run.Error())
 }
 
-var precommit = sh.RunCmd(filepath.Join(_depBin, "pre-commit"))
+func (Hooks) RunAllFiles(ctx context.Context) error {
+	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
+
+	runall := precommit(
+		tools.WithArgs{"run", "--all-files"},
+		tools.WithConsoleOut(mg.Verbose()),
+		tools.WithContext{Context: ctx},
+	)
+
+	if err := runall.Run(); err != nil {
+		return fmt.Errorf("starting to run hooks for all files: %w", err)
+	}
+
+	if runall.Success() {
+		return nil
+	}
+
+	return fmt.Errorf("running hooks for all files: %w", runall.Error())
+}
+
+var precommit = tools.NewCommandAlias(filepath.Join(_depBin, "pre-commit"))

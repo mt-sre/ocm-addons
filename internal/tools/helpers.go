@@ -1,33 +1,10 @@
 package tools
 
 import (
-	"context"
-	"time"
+	"os/exec"
 
 	"github.com/magefile/mage/mg"
-	"github.com/magefile/mage/sh"
 )
-
-// ApplyEnv makes environment variable application a distinct step.
-func ApplyEnv(env map[string]string) func(string, ...string) error {
-	return func(cmd string, args ...string) error {
-		return sh.RunWith(env, cmd, args...)
-	}
-}
-
-// GoTimeoutFlag returns a timeout flag and duration corresponding
-// to the given context deadline as a slice of strings. If the context
-// has no deadline then an empty slice of strings is returned.
-func GoTimeoutFlag(ctx context.Context) []string {
-	deadline, ok := ctx.Deadline()
-	if !ok {
-		return []string{}
-	}
-
-	timeout := time.Until(deadline)
-
-	return []string{"--timeout", timeout.String()}
-}
 
 // GoVerboseFlag checks if 'Mage' was run with the verbose flag and
 // if so returns the Go verbose flag '-v' as a slice of strings.
@@ -38,4 +15,23 @@ func GoVerboseFlag() []string {
 	}
 
 	return []string{"-v"}
+}
+
+// Runtime attempts to find an available container runtime in the PATH.
+// The path to the first available runtime is returned along with a boolean
+// value indicating if any runtimes were found.
+func Runtime() (string, bool) {
+	prefferedRuntimes := []string{
+		"podman",
+		"docker",
+	}
+
+	for _, runtime := range prefferedRuntimes {
+		runtimePath, err := exec.LookPath(runtime)
+		if err == nil {
+			return runtimePath, true
+		}
+	}
+
+	return "", false
 }
