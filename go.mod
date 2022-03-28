@@ -6,7 +6,7 @@ require (
 	github.com/apex/log v1.9.0
 	github.com/magefile/mage v1.13.0
 	github.com/onsi/ginkgo/v2 v2.1.3
-	github.com/onsi/gomega v1.18.1
+	github.com/onsi/gomega v1.19.0
 	github.com/openshift-online/ocm-cli v0.1.62
 	github.com/openshift-online/ocm-sdk-go v0.1.252
 	github.com/pterm/pterm v0.12.39
@@ -76,6 +76,6 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.18 // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 )
