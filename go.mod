@@ -9,7 +9,7 @@ require (
 	github.com/onsi/gomega v1.19.0
 	github.com/openshift-online/ocm-cli v0.1.62
 	github.com/openshift-online/ocm-sdk-go v0.1.252
-	github.com/pterm/pterm v0.12.39
+	github.com/pterm/pterm v0.12.40
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.1
@@ -31,7 +31,7 @@ require (
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
-	github.com/gookit/color v1.4.2 // indirect
+	github.com/gookit/color v1.5.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/itchyny/gojq v0.12.5 // indirect
@@ -77,5 +77,5 @@ require (
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
-	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 // indirect
 )
