@@ -7,4 +7,7 @@ if [ -d  "${GO_1_17}" ]; then
      PATH="${GO_1_17}:${PATH}"
 fi
 
-HAS_PYTHON_38=$(python -c 'import sys; print(sys.version_info[:2] >= (3, 8))')
+PYTHON_VERSION="$(python3 -c 'import sys; print(*sys.version_info[:3])')"
+PYTHON_MAJOR_VERSION=$(echo "${PYTHON_VERSION}" | cut -d' ' -f1)
+PYTHON_MINOR_VERSION=$(echo "${PYTHON_VERSION}" | cut -d' ' -f2)
+PYTHON_PATCH_VERSION=$(echo "${PYTHON_VERSION}" | cut -d' ' -f3)

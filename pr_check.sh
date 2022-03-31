@@ -6,7 +6,7 @@ source "${PWD}/cicd/jenkins_env.sh"
 
 SKIP=""
 
-if [ "${HAS_PYTHON_38}" != "True" ]; then
+if ! [[ (${PYTHON_MAJOR_VERSION} -eq 3 && ${PYTHON_MINOR_VERSION} -ge 8) ]]; then
      SKIP="pymarkdown"
 fi
 
