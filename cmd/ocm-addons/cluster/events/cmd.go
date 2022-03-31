@@ -1,7 +1,6 @@
 package events
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
@@ -97,7 +96,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 
 func run(opts *options) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
+		ctx := cmd.Root().Context()
 
 		opts.ParseOptions()
 
