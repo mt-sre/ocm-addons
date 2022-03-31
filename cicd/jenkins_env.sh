@@ -6,3 +6,5 @@ GO_1_17="/opt/go/1.17.7/bin"
 if [ -d  "${GO_1_17}" ]; then
      PATH="${GO_1_17}:${PATH}"
 fi
+
+HAS_PYTHON_38=$(python -c 'import sys; print(sys.version_info[:2] >= (3, 8))')

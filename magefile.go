@@ -22,6 +22,7 @@ var Aliases = map[string]interface{}{
 	"clean":       All.Clean,
 	"install":     Build.Install,
 	"release":     Release.Full,
+	"run-hooks":   Hooks.Run,
 	"test":        All.Test,
 	"update-deps": All.UpdateDependencies,
 }
