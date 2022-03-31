@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/magefile/mage/mg"
@@ -69,14 +69,14 @@ func (All) UpdateDependencies(ctx context.Context) {
 	)
 }
 
-var _depBin = path.Join(_dependencyDir, "bin")
+var _depBin = filepath.Join(_dependencyDir, "bin")
 
 var _dependencyDir = func() string {
 	if dir, ok := os.LookupEnv("DEPENDENCY_DIR"); ok {
 		return dir
 	}
 
-	return path.Join(_projectRoot, ".cache", "dependencies")
+	return filepath.Join(_projectRoot, ".cache", "dependencies")
 }()
 
 var _projectRoot = func() string {
@@ -119,7 +119,7 @@ func updateGODependency(ctx context.Context, src string) error {
 		return fmt.Errorf("creating dependencies bin directory: %w", err)
 	}
 
-	toolsDir := path.Join(_projectRoot, "tools")
+	toolsDir := filepath.Join(_projectRoot, "tools")
 
 	tidy := exec.Command("go", "mod", "tidy")
 	tidy.Dir = toolsDir
@@ -172,7 +172,7 @@ func (Deps) UpdatePreCommit(ctx context.Context) error {
 
 	version = strings.TrimPrefix(version, "v")
 
-	out := path.Join(_depBin, "pre-commit")
+	out := filepath.Join(_depBin, "pre-commit")
 
 	if _, err := os.Stat(out); err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
@@ -208,7 +208,7 @@ func (Check) Lint(ctx context.Context) error {
 	args = append(args, tools.GoVerboseFlag()...)
 	args = append(args, tools.GoTimeoutFlag(ctx)...)
 
-	out, err := sh.Output(path.Join(_depBin, "golangci-lint"), args...)
+	out, err := sh.Output(filepath.Join(_depBin, "golangci-lint"), args...)
 
 	fmt.Print(out)
 
@@ -217,7 +217,7 @@ func (Check) Lint(ctx context.Context) error {
 
 const binOut = "ocm-addons"
 
-var _binDir = path.Join(_projectRoot, "bin")
+var _binDir = filepath.Join(_projectRoot, "bin")
 
 // Scans imported go packages and ensures they are compatible with
 // this repository's license (Apache 2.0).
@@ -230,9 +230,9 @@ func (Check) License() error {
 	lichenConfig := ".lichen.yaml"
 
 	return sh.Run(
-		path.Join(_depBin, "lichen"),
-		"-c", path.Join(_projectRoot, lichenConfig),
-		path.Join(_binDir, binOut))
+		filepath.Join(_depBin, "lichen"),
+		"-c", filepath.Join(_projectRoot, lichenConfig),
+		filepath.Join(_binDir, binOut))
 }
 
 // Ensures dependencies are correctly updated in the 'go.mod'
@@ -263,7 +263,7 @@ func (Build) Install() error {
 		return fmt.Errorf("GOPATH cannot be found: %w", err)
 	}
 
-	return sh.Copy(path.Join(gopath, "bin", binOut), path.Join(_binDir, binOut))
+	return sh.Copy(filepath.Join(gopath, "bin", binOut), filepath.Join(_binDir, binOut))
 }
 
 // Compiles top-level 'ocm-addons' command as an executable binary.
@@ -280,14 +280,14 @@ func (Build) Plugin() error {
 
 	return runWithGoVars(
 		"go", "build",
-		"-o", path.Join(_binDir, binOut),
+		"-o", filepath.Join(_binDir, binOut),
 		"./cmd/ocm-addons",
 	)
 }
 
 // Removes built binaries if they already exist.
 func (Build) Clean() error {
-	return sh.Rm(path.Join(_binDir, binOut))
+	return sh.Rm(filepath.Join(_binDir, binOut))
 }
 
 type Release mg.Namespace
@@ -299,7 +299,7 @@ func (Release) Full() error {
 		Release.Clean,
 	)
 
-	return sh.Run(path.Join(_depBin, "goreleaser"), "release", "--rm-dist")
+	return sh.Run(filepath.Join(_depBin, "goreleaser"), "release", "--rm-dist")
 }
 
 // Generates release artifacts locally.
@@ -309,11 +309,11 @@ func (Release) Snapshot() error {
 		Release.Clean,
 	)
 
-	return sh.Run(path.Join(_depBin, "goreleaser"), "release", "--snapshot")
+	return sh.Run(filepath.Join(_depBin, "goreleaser"), "release", "--snapshot")
 }
 
 func (Release) Clean() error {
-	return sh.Rm(path.Join(_projectRoot, "dist"))
+	return sh.Rm(filepath.Join(_projectRoot, "dist"))
 }
 
 type Test mg.Namespace
@@ -356,7 +356,7 @@ func (Test) Integration(ctx context.Context) error {
 	args = append(args, tools.GoTimeoutFlag(ctx)...)
 	args = append(args, "integration")
 
-	return sh.Run(path.Join(_depBin, "ginkgo"), args...)
+	return sh.Run(filepath.Join(_depBin, "ginkgo"), args...)
 }
 
 type Hooks mg.Namespace
@@ -405,4 +405,4 @@ func (Hooks) RunAllFiles() error {
 	return nil
 }
 
-var precommit = sh.RunCmd(path.Join(_depBin, "pre-commit"))
+var precommit = sh.RunCmd(filepath.Join(_depBin, "pre-commit"))

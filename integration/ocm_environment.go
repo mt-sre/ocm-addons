@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/onsi/gomega/ghttp"
@@ -127,7 +127,7 @@ func (e *OCMEnvironment) APIServerURL() string {
 }
 
 func (e *OCMEnvironment) Config() string {
-	return path.Join(e.tmpDir, ".ocm.json")
+	return filepath.Join(e.tmpDir, ".ocm.json")
 }
 
 func (e *OCMEnvironment) SSOServerURL() string {
