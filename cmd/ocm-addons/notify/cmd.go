@@ -1,7 +1,6 @@
 package notify
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -48,7 +47,7 @@ func generateCommand(run func(*cobra.Command, []string) error) *cobra.Command {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	ctx := context.Background()
+	ctx := cmd.Root().Context()
 
 	sess, err := cli.NewSession()
 	if err != nil {

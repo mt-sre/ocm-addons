@@ -9,7 +9,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -55,10 +55,10 @@ func getOCMBinPath() (string, error) {
 			return "", fmt.Errorf("determining project root: %w", err)
 		}
 
-		dir = path.Join(root, ".cache", "dependencies")
+		dir = filepath.Join(root, ".cache", "dependencies")
 	}
 
-	ocmBin := path.Join(dir, "bin", "ocm")
+	ocmBin := filepath.Join(dir, "bin", "ocm")
 
 	if _, err := os.Stat(ocmBin); errors.Is(err, os.ErrNotExist) {
 		return "", fmt.Errorf("checking if ocm-cli binary exists: %w", errSetup)
@@ -84,7 +84,7 @@ func buildPluginBinary() (string, error) {
 		ldflags,
 	}
 
-	return gexec.Build(path.Join(root, "cmd", "ocm-addons"), args...)
+	return gexec.Build(filepath.Join(root, "cmd", "ocm-addons"), args...)
 }
 
 func projectRoot() (string, error) {

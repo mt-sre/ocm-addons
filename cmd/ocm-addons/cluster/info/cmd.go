@@ -1,8 +1,6 @@
 package info
 
 import (
-	"context"
-
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
 	"github.com/mt-sre/ocm-addons/internal/output"
@@ -43,7 +41,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 
 func run(opts *options) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
+		ctx := cmd.Root().Context()
 
 		sess, err := cli.NewSession()
 		if err != nil {
