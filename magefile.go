@@ -389,7 +389,10 @@ func (Hooks) Disable() error {
 func (Hooks) Run() error {
 	mg.Deps(Deps.UpdatePreCommit)
 
-	if err := precommit("run", "--show-diff-on-failure"); err != nil {
+	if err := precommit("run",
+		"--show-diff-on-failure",
+		"--from-ref", "origin/main", "--to-ref", "HEAD",
+	); err != nil {
 		return fmt.Errorf("running hooks: %w", err)
 	}
 
