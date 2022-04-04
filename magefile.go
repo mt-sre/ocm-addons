@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -166,12 +165,8 @@ func (Deps) UpdatePreCommit(ctx context.Context) error {
 
 	const urlPrefix = "https://github.com/pre-commit/pre-commit/releases/download"
 
-	version, err := tools.GetLatestTag(ctx, "pre-commit", "pre-commit")
-	if err != nil {
-		return fmt.Errorf("retrieving latest pre-commit release: %w", err)
-	}
-
-	version = strings.TrimPrefix(version, "v")
+	// pinning to version 2.17.0 since 2.18.0+ requires python>=3.7
+	const version = "2.17.0"
 
 	out := filepath.Join(_depBin, "pre-commit")
 
