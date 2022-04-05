@@ -252,14 +252,7 @@ type Build mg.Namespace
 // If "$GOPATH/bin" is in the PATH then the plug-in
 // can be invoked using "ocm addons"
 func (Build) Install() error {
-	mg.Deps(Build.Plugin)
-
-	gopath, err := sh.Output(mg.GoCmd(), "env", "GOPATH")
-	if err != nil {
-		return fmt.Errorf("GOPATH cannot be found: %w", err)
-	}
-
-	return sh.Copy(filepath.Join(gopath, "bin", binOut), filepath.Join(_binDir, binOut))
+	return sh.Run("go", "install", filepath.Join(_projectRoot, "cmd", "ocm-addons"))
 }
 
 // Compiles top-level 'ocm-addons' command as an executable binary.
