@@ -15,6 +15,8 @@ command at `$GOPATH/bin`.
 go install github.com/mt-sre/ocm-addons/cmd/ocm-addons@latest
 ```
 
+See these [instructions](https://go.dev/doc/install) for installing _go_ on your machine.
+
 ### Option 2: Build and install from source
 
 Clone this repository to your local machine.
@@ -29,6 +31,12 @@ add it to your `$GOPATH/bin`.
 If you have not added `$GOPATH/bin` to your `$PATH`, then you may
 alternatively run `./mage build` and manually move the `bin/ocm-addons`
 binary to any other directory in your `$PATH`.
+
+### Option 3: Install using 'install.sh' (Not supported for Windows)
+
+```bash
+curl -L https://raw.githubusercontent.com/mt-sre/ocm-addons/main/scripts/install.sh | bash
+```
 
 ## Usage
 
