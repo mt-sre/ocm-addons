@@ -54,15 +54,7 @@ will generate upon login and will remove upon logout. In the current state
 
 ## Development
 
-Create a fork of this repository and clone that fork to your local machine.
-
-All development tooling can be accessed through _mage_ and simply running
-`./mage` will list all targets with additional information for each target
-available by running `./mage -h [target]`.
-
-Additionally you should install [pre-commit](https://pre-commit.com/#install) to
-ensure code quality with every commit. Once installed run `pre-commit install`
-in your local copy of this repository to initialize the pre-commit hooks.
+See the [contributing](CONTRIBUTING.md) guide for more information.
 
 ## Configuration
 
