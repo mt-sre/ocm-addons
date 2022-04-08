@@ -15,6 +15,8 @@ command at `$GOPATH/bin`.
 go install github.com/mt-sre/ocm-addons/cmd/ocm-addons@latest
 ```
 
+See these [instructions](https://go.dev/doc/install) for installing _go_ on your machine.
+
 ### Option 2: Build and install from source
 
 Clone this repository to your local machine.
@@ -29,6 +31,12 @@ add it to your `$GOPATH/bin`.
 If you have not added `$GOPATH/bin` to your `$PATH`, then you may
 alternatively run `./mage build` and manually move the `bin/ocm-addons`
 binary to any other directory in your `$PATH`.
+
+### Option 3: Install using 'install.sh' (Not supported for Windows)
+
+```bash
+curl -L https://raw.githubusercontent.com/mt-sre/ocm-addons/main/scripts/install.sh | bash
+```
 
 ## Usage
 
@@ -46,15 +54,7 @@ will generate upon login and will remove upon logout. In the current state
 
 ## Development
 
-Create a fork of this repository and clone that fork to your local machine.
-
-All development tooling can be accessed through _mage_ and simply running
-`./mage` will list all targets with additional information for each target
-available by running `./mage -h [target]`.
-
-Additionally you should install [pre-commit](https://pre-commit.com/#install) to
-ensure code quality with every commit. Once installed run `pre-commit install`
-in your local copy of this repository to initialize the pre-commit hooks.
+See the [contributing](CONTRIBUTING.md) guide for more information.
 
 ## Configuration
 
