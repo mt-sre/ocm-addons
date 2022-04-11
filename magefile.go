@@ -219,7 +219,7 @@ var _binDir = filepath.Join(_projectRoot, "bin")
 // this repository's license (Apache 2.0).
 func (Check) License() error {
 	mg.Deps(
-		Build.Install,
+		Build.Plugin,
 		Deps.UpdateLichen,
 	)
 
