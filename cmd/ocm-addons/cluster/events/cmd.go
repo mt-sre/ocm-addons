@@ -159,10 +159,10 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 }
 
 func commandOptsToGetLogsOpts(opts *options) (ocm.GetLogsOptions, error) {
-	pattern := "Add-on%"
+	pattern := ""
 
 	if opts.Search != "" {
-		pattern += fmt.Sprintf("%s%%", opts.Search)
+		pattern += fmt.Sprintf("%%%s%%", opts.Search)
 	}
 
 	if err := opts.ParseFilterOptions(); err != nil {
