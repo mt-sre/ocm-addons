@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"path/filepath"
+	"path"
 	"regexp"
 	"strings"
 
@@ -186,7 +186,7 @@ func loadNotifications(dataDir fs.ReadDirFS) (ConfigTree, error) {
 	for _, dir := range teamDirs {
 		teamName := dir.Name()
 
-		subFS, err := fs.Sub(dataDir, filepath.Join(_dataDirName, teamName))
+		subFS, err := fs.Sub(dataDir, path.Join(_dataDirName, teamName))
 		if err != nil {
 			return nil, fmt.Errorf("subbing team directory: %w", err)
 		}
@@ -250,7 +250,7 @@ func loadTeamConfigDirectory(dir fs.FS) (map[string]map[string]Config, error) {
 			return nil, fmt.Errorf("loading config file %q: %w", name, err)
 		}
 
-		key := strings.TrimSuffix(name, filepath.Ext(name))
+		key := strings.TrimSuffix(name, path.Ext(name))
 
 		result[key] = configs
 	}
