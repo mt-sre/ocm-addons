@@ -9,7 +9,7 @@ require (
 	github.com/onsi/gomega v1.19.0
 	github.com/openshift-online/ocm-cli v0.1.62
 	github.com/openshift-online/ocm-sdk-go v0.1.260
-	github.com/pterm/pterm v0.12.40
+	github.com/pterm/pterm v0.12.41
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.1
