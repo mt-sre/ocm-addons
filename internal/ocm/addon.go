@@ -45,10 +45,8 @@ func (a *Addon) ProvideRowData() map[string]interface{} {
 		"Label":                  a.addon.Label(),
 		"Name":                   a.Name(),
 		"Operator Name":          a.addon.OperatorName(),
-		"Policy Permissions":     strings.Join(a.addon.PolicyPermissions(), ", "),
 		"Resource Cost":          a.addon.ResourceCost(),
 		"Resource Name":          a.addon.ResourceName(),
-		"Service Account":        a.addon.ServiceAccount(),
 		"Version ID":             a.addon.Version().ID(),
 	}
 
@@ -197,5 +195,22 @@ func (aso *AddonSubOperator) ProvideRowData() map[string]interface{} {
 		"Operator Name":      aso.sub.OperatorName(),
 		"Operator Namespace": aso.sub.OperatorNamespace(),
 		"Enabled":            aso.sub.Enabled(),
+	}
+}
+
+type CredentialRequest struct {
+	req *cmv1.CredentialRequest
+}
+
+func (cr *CredentialRequest) ProvideRowData() map[string]interface{} {
+	if cr == nil {
+		return map[string]interface{}{}
+	}
+
+	return map[string]interface{}{
+		"Name":               cr.req.Name(),
+		"Namespace":          cr.req.Namespace(),
+		"Policy Permissions": strings.Join(cr.req.PolicyPermissions(), ", "),
+		"Service Account":    cr.req.ServiceAccount(),
 	}
 }
