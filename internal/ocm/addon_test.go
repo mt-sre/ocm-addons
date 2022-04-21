@@ -26,3 +26,7 @@ func TestAddonSubOperatorInterfaces(t *testing.T) {
 func TestAddonVersionInterfaces(t *testing.T) {
 	require.Implements(t, new(output.RowDataProvider), new(AddonVersion))
 }
+
+func TestCredentialRequestInterfaces(t *testing.T) {
+	require.Implements(t, new(output.RowDataProvider), new(CredentialRequest))
+}
