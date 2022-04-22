@@ -422,7 +422,7 @@ func (Release) Snapshot(ctx context.Context) error {
 	return fmt.Errorf("releasing snapshot: %w", release.Error())
 }
 
-var goreleaser = tools.NewCommandAlias("goreleaser")
+var goreleaser = tools.NewCommandAlias(filepath.Join(_depBin, "goreleaser"))
 
 func (Release) Clean() error {
 	return sh.Rm(filepath.Join(_projectRoot, "dist"))
