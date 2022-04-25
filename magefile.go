@@ -13,6 +13,7 @@ import (
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
+	"github.com/mt-sre/go-ci/command"
 	"github.com/mt-sre/ocm-addons/internal/tools"
 )
 
@@ -84,7 +85,7 @@ var _projectRoot = func() string {
 		return root
 	}
 
-	topLevel := git(tools.WithArgs{"rev-parse", "--show-toplevel"})
+	topLevel := git(command.WithArgs{"rev-parse", "--show-toplevel"})
 
 	if err := topLevel.Run(); err != nil || !topLevel.Success() {
 		panic("failed to get working directory")
@@ -93,7 +94,7 @@ var _projectRoot = func() string {
 	return strings.TrimSpace(topLevel.Stdout())
 }()
 
-var git = tools.NewCommandAlias("git")
+var git = command.NewCommandAlias("git")
 
 type Deps mg.Namespace
 
@@ -125,10 +126,10 @@ func updateGODependency(ctx context.Context, src string) error {
 	toolsDir := filepath.Join(_projectRoot, "tools")
 
 	tidy := gocmd(
-		tools.WithArgs{"mod", "tidy"},
-		tools.WithWorkingDirectory(toolsDir),
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"mod", "tidy"},
+		command.WithWorkingDirectory(toolsDir),
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := tidy.Run(); err != nil {
@@ -140,12 +141,12 @@ func updateGODependency(ctx context.Context, src string) error {
 	}
 
 	install := gocmd(
-		tools.WithArgs{"install", src},
-		tools.WithWorkingDirectory(toolsDir),
-		tools.WithCurrentEnv(true),
-		tools.WithEnv{"GOBIN": _depBin},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"install", src},
+		command.WithWorkingDirectory(toolsDir),
+		command.WithCurrentEnv(true),
+		command.WithEnv{"GOBIN": _depBin},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := install.Run(); err != nil {
@@ -159,7 +160,7 @@ func updateGODependency(ctx context.Context, src string) error {
 	return nil
 }
 
-var gocmd = tools.NewCommandAlias(mg.GoCmd())
+var gocmd = command.NewCommandAlias(mg.GoCmd())
 
 func (Deps) UpdatePreCommit(ctx context.Context) error {
 	if err := setupDepsBin(); err != nil {
@@ -205,9 +206,9 @@ func (Check) Lint(ctx context.Context) error {
 	)
 
 	run := golancilint(
-		tools.WithArgs{"run"},
-		tools.WithArgs(tools.GoVerboseFlag()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"run"},
+		command.WithArgs(tools.GoVerboseFlag()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := run.Run(); err != nil {
@@ -223,7 +224,7 @@ func (Check) Lint(ctx context.Context) error {
 	return fmt.Errorf("running linter: %w", run.Error())
 }
 
-var golancilint = tools.NewCommandAlias(filepath.Join(_depBin, "golangci-lint"))
+var golancilint = command.NewCommandAlias(filepath.Join(_depBin, "golangci-lint"))
 
 const binOut = "ocm-addons"
 
@@ -241,12 +242,12 @@ func (Check) License(ctx context.Context) error {
 	lichenConfig := ".lichen.yaml"
 
 	licenseCheck := lichen(
-		tools.WithArgs{
+		command.WithArgs{
 			"-c", filepath.Join(_projectRoot, lichenConfig),
 			filepath.Join(_binDir, binOut),
 		},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := licenseCheck.Run(); err != nil {
@@ -260,7 +261,7 @@ func (Check) License(ctx context.Context) error {
 	return fmt.Errorf("running license check: %w", licenseCheck.Error())
 }
 
-var lichen = tools.NewCommandAlias(filepath.Join(_depBin, "lichen"))
+var lichen = command.NewCommandAlias(filepath.Join(_depBin, "lichen"))
 
 // Ensures dependencies are correctly updated in the 'go.mod'
 // and 'go.sum' files.
@@ -278,9 +279,9 @@ func (Check) Tidy(ctx context.Context) error {
 
 func tidyVersion(ctx context.Context, version string) error {
 	tidy := gocmd(
-		tools.WithArgs{"mod", "tidy", "-go=" + version},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"mod", "tidy", "-go=" + version},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := tidy.Run(); err != nil {
@@ -297,9 +298,9 @@ func tidyVersion(ctx context.Context, version string) error {
 // Ensures package dependencies have not been tampered with since download.
 func (Check) Verify(ctx context.Context) error {
 	verify := gocmd(
-		tools.WithArgs{"mod", "verify"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"mod", "verify"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := verify.Run(); err != nil {
@@ -320,7 +321,7 @@ type Build mg.Namespace
 // can be invoked using "ocm addons"
 func (Build) Install(ctx context.Context) error {
 	install := gocmd(
-		tools.WithArgs{
+		command.WithArgs{
 			"install", filepath.Join(_projectRoot, "cmd", "ocm-addons"),
 		},
 	)
@@ -343,15 +344,15 @@ func (Build) Plugin(ctx context.Context) error {
 	mg.Deps(Build.Clean)
 
 	build := gocmd(
-		tools.WithArgs{
+		command.WithArgs{
 			"build",
 			"-o", filepath.Join(_binDir, binOut),
 			filepath.Join(_projectRoot, "cmd", "ocm-addons"),
 		},
-		tools.WithCurrentEnv(true),
-		tools.WithEnv{"CGO_ENABLED": "0"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithCurrentEnv(true),
+		command.WithEnv{"CGO_ENABLED": "0"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := build.Run(); err != nil {
@@ -381,9 +382,9 @@ func (Release) Full(ctx context.Context) error {
 	)
 
 	release := goreleaser(
-		tools.WithArgs{"release", "--rm-dist"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"release", "--rm-dist"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := release.Run(); err != nil {
@@ -406,9 +407,9 @@ func (Release) Snapshot(ctx context.Context) error {
 	)
 
 	release := goreleaser(
-		tools.WithArgs{"release", "--snapshot"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"release", "--snapshot"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := release.Run(); err != nil {
@@ -422,7 +423,7 @@ func (Release) Snapshot(ctx context.Context) error {
 	return fmt.Errorf("releasing snapshot: %w", release.Error())
 }
 
-var goreleaser = tools.NewCommandAlias(filepath.Join(_depBin, "goreleaser"))
+var goreleaser = command.NewCommandAlias(filepath.Join(_depBin, "goreleaser"))
 
 func (Release) Clean() error {
 	return sh.Rm(filepath.Join(_projectRoot, "dist"))
@@ -433,11 +434,11 @@ type Test mg.Namespace
 // Runs unit tests.
 func (Test) Unit(ctx context.Context) error {
 	test := gocmd(
-		tools.WithArgs{"test", "-race"},
-		tools.WithArgs(tools.GoVerboseFlag()),
-		tools.WithArgs{"./cmd/...", "./internal/..."},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"test", "-race"},
+		command.WithArgs(tools.GoVerboseFlag()),
+		command.WithArgs{"./cmd/...", "./internal/..."},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := test.Run(); err != nil {
@@ -460,7 +461,7 @@ func (Test) Integration(ctx context.Context) error {
 	)
 
 	test := ginkgo(
-		tools.WithArgs{
+		command.WithArgs{
 			"-r",
 			"--randomize-all",
 			"--randomize-suites",
@@ -469,10 +470,10 @@ func (Test) Integration(ctx context.Context) error {
 			"--race",
 			"--trace",
 		},
-		tools.WithArgs(tools.GoVerboseFlag()),
-		tools.WithArgs{"integration"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs(tools.GoVerboseFlag()),
+		command.WithArgs{"integration"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := test.Run(); err != nil {
@@ -486,7 +487,7 @@ func (Test) Integration(ctx context.Context) error {
 	return fmt.Errorf("running integration tests: %w", test.Error())
 }
 
-var ginkgo = tools.NewCommandAlias(filepath.Join(_depBin, "ginkgo"))
+var ginkgo = command.NewCommandAlias(filepath.Join(_depBin, "ginkgo"))
 
 type Hooks mg.Namespace
 
@@ -494,13 +495,13 @@ func (Hooks) Enable(ctx context.Context) error {
 	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
 	install := precommit(
-		tools.WithArgs{
+		command.WithArgs{
 			"install",
 			"--hook-type", "pre-commit",
 			"--hook-type", "pre-push",
 		},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := install.Run(); err != nil {
@@ -518,9 +519,9 @@ func (Hooks) Disable(ctx context.Context) error {
 	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
 	uninstall := precommit(
-		tools.WithArgs{"uninstall"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"uninstall"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := uninstall.Run(); err != nil {
@@ -538,12 +539,12 @@ func (Hooks) Run(ctx context.Context) error {
 	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
 	run := precommit(
-		tools.WithArgs{"run",
+		command.WithArgs{"run",
 			"--show-diff-on-failure",
 			"--from-ref", "origin/main", "--to-ref", "HEAD",
 		},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := run.Run(); err != nil {
@@ -561,9 +562,9 @@ func (Hooks) RunAllFiles(ctx context.Context) error {
 	mg.CtxDeps(ctx, Deps.UpdatePreCommit)
 
 	runall := precommit(
-		tools.WithArgs{"run", "--all-files"},
-		tools.WithConsoleOut(mg.Verbose()),
-		tools.WithContext{Context: ctx},
+		command.WithArgs{"run", "--all-files"},
+		command.WithConsoleOut(mg.Verbose()),
+		command.WithContext{Context: ctx},
 	)
 
 	if err := runall.Run(); err != nil {
@@ -577,4 +578,4 @@ func (Hooks) RunAllFiles(ctx context.Context) error {
 	return fmt.Errorf("running hooks for all files: %w", runall.Error())
 }
 
-var precommit = tools.NewCommandAlias(filepath.Join(_depBin, "pre-commit"))
+var precommit = command.NewCommandAlias(filepath.Join(_depBin, "pre-commit"))
