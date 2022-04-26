@@ -31,14 +31,6 @@ type AddonInstallation struct {
 	addon   *Addon
 }
 
-type AddonInstallationRowObject struct {
-	AddonID     string
-	AddonName   string
-	ClusterID   string
-	ClusterName string
-	State       string
-}
-
 func (a *AddonInstallation) ProvideRowData() map[string]interface{} {
 	result := map[string]interface{}{
 		"State": a.State(),
