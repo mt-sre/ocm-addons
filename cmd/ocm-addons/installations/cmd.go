@@ -12,7 +12,7 @@ import (
 func Cmd() *cobra.Command {
 	var opts options
 
-	opts.DefaultColumns("addon_id, addon_name, addon_version_id, cluster_id, cluster_name, cluster_state, state")
+	opts.DefaultColumns("addon_id, addon_name, installed_version_id, cluster_id, cluster_name, cluster_state, state")
 
 	return generateCommand(&opts, run(&opts))
 }
