@@ -156,11 +156,11 @@ func (c *Cluster) WithAddonInstallations(ctx context.Context) (*Cluster, error) 
 			return nil
 		}
 
-		c.AddonInstallations = append(c.AddonInstallations, AddonInstallation{
-			AddOnInstallation: install,
-			addon:             addon,
-			cluster:           c,
-		})
+		c.AddonInstallations = append(c.AddonInstallations, NewAddonInstallation(
+			install,
+			WithAddon{Addon: addon},
+			WithCluster{Cluster: c},
+		))
 
 		return nil
 	})
@@ -213,7 +213,7 @@ func (c *Cluster) installedAddons() string {
 	for _, install := range c.AddonInstallations {
 		displayValues = append(
 			displayValues,
-			fmt.Sprintf("%s(%s)", install.addon.ID(), install.State()),
+			fmt.Sprintf("%s(%s)", install.ID(), install.State()),
 		)
 	}
 
