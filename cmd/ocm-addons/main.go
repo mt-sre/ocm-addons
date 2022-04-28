@@ -9,6 +9,7 @@ import (
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/installations"
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/list"
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/notify"
+	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/update"
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/version"
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/spf13/cobra"
@@ -38,6 +39,7 @@ func generateRootCmd() *cobra.Command {
 	rootCmd.AddCommand(installations.Cmd())
 	rootCmd.AddCommand(list.Cmd())
 	rootCmd.AddCommand(notify.Cmd())
+	rootCmd.AddCommand(update.Cmd())
 	rootCmd.AddCommand(version.Cmd())
 
 	flags := rootCmd.PersistentFlags()
