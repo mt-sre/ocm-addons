@@ -74,7 +74,7 @@ require (
 
 require (
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
-	github.com/go-playground/validator/v10 v10.10.1
+	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.18 // indirect
