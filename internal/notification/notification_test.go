@@ -5,7 +5,7 @@ import (
 	"testing"
 	"testing/fstest"
 
-	"github.com/mt-sre/ocm-addons/internal/output"
+	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
@@ -164,5 +164,5 @@ func TestConfigInterfaces(t *testing.T) {
 	t.Parallel()
 
 	require.Implements(t, new(yaml.Unmarshaler), new(Config))
-	require.Implements(t, new(output.RowDataProvider), new(Config))
+	require.Implements(t, new(cli.RowDataProvider), new(Config))
 }

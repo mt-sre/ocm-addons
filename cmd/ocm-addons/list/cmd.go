@@ -5,7 +5,6 @@ import (
 
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
-	"github.com/mt-sre/ocm-addons/internal/output"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -55,11 +54,11 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		defer sess.End()
 
-		table, err := output.NewTable(
-			output.WithColumns(opts.Columns),
-			output.WithNoColor(opts.NoColor),
-			output.WithNoHeaders(opts.NoHeaders),
-			output.WithPager(sess.Pager()),
+		table, err := cli.NewTable(
+			cli.WithColumns(opts.Columns),
+			cli.WithNoColor(opts.NoColor),
+			cli.WithNoHeaders(opts.NoHeaders),
+			cli.WithPager(sess.Pager()),
 		)
 		if err != nil {
 			return fmt.Errorf("initializing table: %w", err)
