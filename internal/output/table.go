@@ -69,7 +69,7 @@ func (t *Table) Write(r RowDataProvider, mods ...RowModifier) error {
 	values := make([]string, 0, len(t.cfg.Columns))
 
 	for _, col := range t.cfg.Columns {
-		values = append(values, row.ValueString(normalize(col)))
+		values = append(values, row.ValueString(Normalize(col)))
 	}
 
 	t.data = append(t.data, values)
@@ -199,10 +199,10 @@ func NewRow(data map[string]interface{}) Row {
 
 type Row map[string]interface{}
 
-func (r Row) AddField(name string, val interface{}) { r[normalize(name)] = val }
+func (r Row) AddField(name string, val interface{}) { r[Normalize(name)] = val }
 
 func (r Row) ValueString(name string) string {
-	if val, ok := r[normalize(name)]; ok {
+	if val, ok := r[Normalize(name)]; ok {
 		return fmt.Sprint(val)
 	}
 
@@ -281,7 +281,7 @@ func (p *Pager) Close() error {
 	return fmt.Errorf("waiting for pager: %w", <-p.done)
 }
 
-func normalize(s string) string {
+func Normalize(s string) string {
 	trimmed := strings.TrimSpace(s)
 	snaked := strings.Join(strings.Fields(trimmed), "_")
 

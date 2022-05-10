@@ -1,6 +1,8 @@
 package installations
 
 import (
+	"strings"
+
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
 	"github.com/mt-sre/ocm-addons/internal/output"
@@ -41,7 +43,7 @@ func generateCommand(options *options, run func(*cobra.Command, []string) error)
 	return cmd
 }
 
-func run(opts *options) func(cmd *cobra.Command, args []string) error {
+func run(opts *options) func(cmd *cobra.Command, args []string) error { //nolint: cyclop
 	return func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Root().Context()
 
@@ -63,6 +65,8 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 		}
 
 		defer table.Flush()
+
+		requiresSub := hasSubscriptionField(opts.Columns)
 
 		var pattern string
 
@@ -89,6 +93,13 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 				return err
 			}
 
+			if requiresSub {
+				cluster, err = cluster.WithSubscription(ctx)
+				if err != nil {
+					return err
+				}
+			}
+
 			addons := cluster.AddonInstallations
 
 			if pattern != "" {
@@ -108,4 +119,28 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		return nil
 	}
+}
+
+func hasSubscriptionField(columns string) bool {
+	subFields := new(ocm.Subscription).ProvideRowData()
+
+	fields := make([]string, 0, len(subFields))
+
+	for f := range subFields {
+		fields = append(fields, "Cluster "+f)
+	}
+
+	requestedFields := strings.Split(columns, ",")
+
+	for _, c := range requestedFields {
+		for _, f := range fields {
+			if output.Normalize(c) != output.Normalize(f) {
+				continue
+			}
+
+			return true
+		}
+	}
+
+	return false
 }
