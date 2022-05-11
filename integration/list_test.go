@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 
+	"github.com/mt-sre/ocm-addons/integration/internal/generator"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 )
 
@@ -120,10 +121,10 @@ func generateAddOns(num int) ([]*cmv1.AddOn, error) {
 	addons := make([]*cmv1.AddOn, 0, num)
 
 	for i := 1; i <= num; i++ {
-		addon, err := GenerateAddOn(
-			AddOnID(fmt.Sprintf("test-addon-%d", i)),
-			AddOnName(fmt.Sprintf("Test Addon %d", i)),
-			AddOnEnabled,
+		addon, err := generator.GenerateAddOn(
+			generator.WithID(fmt.Sprintf("test-addon-%d", i)),
+			generator.WithName(fmt.Sprintf("Test Addon %d", i)),
+			generator.WithEnabled(true),
 		)
 		if err != nil {
 			return nil, err

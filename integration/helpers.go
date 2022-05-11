@@ -20,14 +20,3 @@ func MatchRow(values ...interface{}) types.GomegaMatcher {
 
 	return gbytes.Say(row, values...)
 }
-
-var (
-	dotJoin   = joinBy(".")
-	slashJoin = joinBy("/")
-)
-
-func joinBy(sep string) func(...string) string {
-	return func(words ...string) string {
-		return strings.Join(words, sep)
-	}
-}
