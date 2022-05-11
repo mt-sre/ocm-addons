@@ -23,6 +23,8 @@ var _ = Describe("list subcommand", func() {
 		ocm, err = setupEnv()
 		Expect(err).ToNot(HaveOccurred())
 
+		DeferCleanup(ocm.CleanUp)
+
 		ocmCommand := exec.Command(
 			_ocmBinary, "login",
 			"--client-id", "my-client",
@@ -36,11 +38,6 @@ var _ = Describe("list subcommand", func() {
 		session, err := Start(ocmCommand, GinkgoWriter, GinkgoWriter)
 		Expect(err).ToNot(HaveOccurred())
 		Eventually(session).Should(Exit(0))
-	})
-
-	AfterEach(func() {
-		err := ocm.CleanUp()
-		Expect(err).ToNot(HaveOccurred())
 	})
 
 	Describe("using optional flags", func() {

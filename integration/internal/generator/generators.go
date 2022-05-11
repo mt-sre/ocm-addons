@@ -275,6 +275,6 @@ type SubscriptionGenerateOption interface {
 
 type Route struct {
 	Method  string
-	Path    string
+	Path    interface{}
 	Handler http.HandlerFunc
 }

@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"regexp"
 
 	"github.com/mt-sre/ocm-addons/integration/internal/utils"
 	amv1 "github.com/openshift-online/ocm-sdk-go/accountsmgmt/v1"
@@ -109,7 +110,7 @@ func (p *ClusterListJSONEncoder) ToRoutes() ([]Route, error) {
 
 	routes = append(routes, Route{
 		Method:  "GET",
-		Path:    "/api/clusters_mgmt/v1/clusters",
+		Path:    regexp.MustCompile(`/api/clusters_mgmt/v1/clusters.*`),
 		Handler: handler,
 	})
 
