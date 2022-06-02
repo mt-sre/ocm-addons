@@ -8,7 +8,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/onsi/gomega v1.19.0
 	github.com/openshift-online/ocm-cli v0.1.63
-	github.com/openshift-online/ocm-sdk-go v0.1.270
+	github.com/openshift-online/ocm-sdk-go v0.1.271
 	github.com/pterm/pterm v0.12.41
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
@@ -16,7 +16,7 @@ require (
 	go.uber.org/multierr v1.8.0
 )
 
-require gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+require gopkg.in/yaml.v3 v3.0.1
 
 require github.com/mt-sre/go-ci v0.3.1
 
