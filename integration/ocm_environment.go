@@ -1,14 +1,12 @@
 package integration
 
 import (
-	"bytes"
-	"net/http"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/mt-sre/ocm-addons/integration/internal/generator"
 	"github.com/onsi/gomega/ghttp"
-	amv1 "github.com/openshift-online/ocm-sdk-go/accountsmgmt/v1"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	sdktesting "github.com/openshift-online/ocm-sdk-go/testing"
 )
@@ -51,12 +49,11 @@ func NewOCMEnvironment(opts ...OCMEnvironmentOption) (*OCMEnvironment, error) {
 }
 
 type OCMEnvironment struct {
-	apiServer     *ghttp.Server
-	ssoServer     *ghttp.Server
-	addons        []*cmv1.AddOn
-	clusters      []*cmv1.Cluster
-	subscriptions []*amv1.Subscription
-	tmpDir        string
+	apiServer *ghttp.Server
+	ssoServer *ghttp.Server
+	addons    []*cmv1.AddOn
+	clusters  []*cmv1.Cluster
+	tmpDir    string
 }
 
 func (e *OCMEnvironment) Option(opt OCMEnvironmentOption) error {
@@ -68,7 +65,7 @@ func (e *OCMEnvironment) Addons() []*cmv1.AddOn {
 }
 
 func (e *OCMEnvironment) AddAddonRoutes() error {
-	addonRoutes, err := NewAddOnListPager(e.addons...).ToRoutes()
+	addonRoutes, err := generator.NewAddOnListEncoder(e.addons...).ToRoutes()
 	if err != nil {
 		return err
 	}
@@ -85,38 +82,13 @@ func (e *OCMEnvironment) Clusters() []*cmv1.Cluster {
 }
 
 func (e *OCMEnvironment) AddClusterRoutes() error {
-	clusterRoutes, err := NewClusterListPager(e.clusters...).ToRoutes()
+	clusterRoutes, err := generator.NewClusterListJSONEncoder(e.clusters...).ToRoutes()
 	if err != nil {
 		return err
 	}
 
 	for _, r := range clusterRoutes {
 		e.apiServer.RouteToHandler(r.Method, r.Path, r.Handler)
-	}
-
-	return nil
-}
-
-func (e *OCMEnvironment) Subscriptions() []*amv1.Subscription {
-	return append(make([]*amv1.Subscription, 0, len(e.subscriptions)), e.subscriptions...)
-}
-
-func (e *OCMEnvironment) AddSubscriptionRoutes() error {
-	var buf bytes.Buffer
-
-	for _, sub := range e.subscriptions {
-		err := amv1.MarshalSubscription(sub, &buf)
-		if err != nil {
-			return err
-		}
-
-		e.apiServer.RouteToHandler(
-			"GET",
-			slashJoin("/api/accounts_mgmt/v1/subscriptions", sub.ID()),
-			sdktesting.RespondWithJSON(http.StatusOK, buf.String()),
-		)
-
-		buf.Reset()
 	}
 
 	return nil
@@ -176,13 +148,5 @@ func OCMEnvironmentSSOServer(serv *ghttp.Server) OCMEnvironmentOption {
 		e.ssoServer = serv
 
 		return nil
-	}
-}
-
-func OCMEnvironmentSubscriptions(subs ...*amv1.Subscription) OCMEnvironmentOption {
-	return func(e *OCMEnvironment) error {
-		e.subscriptions = append(e.subscriptions, subs...)
-
-		return e.AddSubscriptionRoutes()
 	}
 }

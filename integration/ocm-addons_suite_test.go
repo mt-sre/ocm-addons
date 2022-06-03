@@ -38,6 +38,8 @@ var _ = BeforeSuite(func() {
 			"and must be installed before running these tests.",
 	)
 
+	DeferCleanup(gexec.CleanupBuildArtifacts)
+
 	_pluginPath, err = buildPluginBinary()
 	Expect(err).ToNot(
 		HaveOccurred(),
@@ -100,7 +102,3 @@ func projectRoot() (string, error) {
 
 	return strings.TrimSpace(buf.String()), nil
 }
-
-var _ = AfterSuite(func() {
-	gexec.CleanupBuildArtifacts()
-})

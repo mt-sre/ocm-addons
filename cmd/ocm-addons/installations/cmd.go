@@ -5,7 +5,6 @@ import (
 
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
-	"github.com/mt-sre/ocm-addons/internal/output"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -54,11 +53,11 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error { //nolint
 
 		defer sess.End()
 
-		table, err := output.NewTable(
-			output.WithColumns(opts.Columns),
-			output.WithNoColor(opts.NoColor),
-			output.WithNoHeaders(opts.NoHeaders),
-			output.WithPager(sess.Pager()),
+		table, err := cli.NewTable(
+			cli.WithColumns(opts.Columns),
+			cli.WithNoColor(opts.NoColor),
+			cli.WithNoHeaders(opts.NoHeaders),
+			cli.WithPager(sess.Pager()),
 		)
 		if err != nil {
 			return err
@@ -134,7 +133,7 @@ func hasSubscriptionField(columns string) bool {
 
 	for _, c := range requestedFields {
 		for _, f := range fields {
-			if output.Normalize(c) != output.Normalize(f) {
+			if cli.Normalize(c) != cli.Normalize(f) {
 				continue
 			}
 
