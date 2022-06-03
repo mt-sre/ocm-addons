@@ -110,6 +110,7 @@ func (c *Cluster) WithSubscription(ctx context.Context) (*Cluster, error) {
 		Subscriptions().
 		Subscription(c.cluster.Subscription().ID()).
 		Get().
+		Parameter("fetchAccounts", true).
 		SendContext(ctx)
 	if err != nil {
 		return c, err
@@ -412,7 +413,11 @@ func (s *Subscription) ProvideRowData() map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"Organization ID": s.sub.OrganizationID(),
-		"Support Level":   s.sub.SupportLevel(),
+		"Creator ID":       s.sub.Creator().ID(),
+		"Creator Email":    s.sub.Creator().Email(),
+		"Creator Name":     fmt.Sprintf("%s %s", s.sub.Creator().FirstName(), s.sub.Creator().LastName()),
+		"Creator Username": s.sub.Creator().Username(),
+		"Organization ID":  s.sub.OrganizationID(),
+		"Support Level":    s.sub.SupportLevel(),
 	}
 }
