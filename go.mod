@@ -18,7 +18,7 @@ require (
 
 require gopkg.in/yaml.v3 v3.0.1
 
-require github.com/mt-sre/go-ci v0.3.1
+require github.com/mt-sre/go-ci v0.3.2
 
 require (
 	github.com/atomicgo/cursor v0.0.1 // indirect
