@@ -10,7 +10,6 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 
-	"github.com/mt-sre/ocm-addons/integration/internal/generator"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 )
 
@@ -83,28 +82,30 @@ var _ = Describe("list subcommand", func() {
 	})
 
 	Describe("using default behavior", func() {
-		It("should write addons as a table", func() {
-			pluginCommand := exec.Command(
-				_pluginPath, "list",
-			)
+		Context("with 100 addons", func() {
+			It("should write multiple pages of addons as a table", func() {
+				pluginCommand := exec.Command(
+					_pluginPath, "list",
+				)
 
-			pluginCommand.Env = append(pluginCommand.Env, fmt.Sprintf("OCM_CONFIG=%s", ocm.Config()))
+				pluginCommand.Env = append(pluginCommand.Env, fmt.Sprintf("OCM_CONFIG=%s", ocm.Config()))
 
-			session, err := Start(pluginCommand, GinkgoWriter, GinkgoWriter)
-			Expect(err).ToNot(HaveOccurred())
-			Eventually(session).Should(Exit(0))
+				session, err := Start(pluginCommand, GinkgoWriter, GinkgoWriter)
+				Expect(err).ToNot(HaveOccurred())
+				Eventually(session).Should(Exit(0))
 
-			Expect(session.Out).To(MatchRow("ID", "NAME", "ENABLED"))
+				Expect(session.Out).To(MatchRow("ID", "NAME", "ENABLED"))
 
-			for _, addon := range ocm.Addons() {
-				Expect(session.Out).To(MatchRow(addon.ID(), addon.Name(), fmt.Sprint(addon.Enabled())))
-			}
+				for _, addon := range ocm.Addons() {
+					Expect(session.Out).To(MatchRow(addon.ID(), addon.Name(), fmt.Sprint(addon.Enabled())))
+				}
+			})
 		})
 	})
 })
 
 func setupEnv() (*OCMEnvironment, error) {
-	addons, err := generateAddOns(3)
+	addons, err := generateAddOns(100)
 	if err != nil {
 		return nil, err
 	}
@@ -118,10 +119,10 @@ func generateAddOns(num int) ([]*cmv1.AddOn, error) {
 	addons := make([]*cmv1.AddOn, 0, num)
 
 	for i := 1; i <= num; i++ {
-		addon, err := generator.GenerateAddOn(
-			generator.WithID(fmt.Sprintf("test-addon-%d", i)),
-			generator.WithName(fmt.Sprintf("Test Addon %d", i)),
-			generator.WithEnabled(true),
+		addon, err := GenerateAddOn(
+			AddOnID(fmt.Sprintf("test-addon-%d", i)),
+			AddOnName(fmt.Sprintf("Test Addon %d", i)),
+			AddOnEnabled,
 		)
 		if err != nil {
 			return nil, err
