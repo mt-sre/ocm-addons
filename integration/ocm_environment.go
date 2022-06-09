@@ -68,7 +68,7 @@ func (e *OCMEnvironment) Addons() []*cmv1.AddOn {
 }
 
 func (e *OCMEnvironment) AddAddonRoutes() error {
-	addonRoutes, err := NewAddOnListEncoder(e.addons...).ToRoutes()
+	addonRoutes, err := NewAddOnListPager(e.addons...).ToRoutes()
 	if err != nil {
 		return err
 	}

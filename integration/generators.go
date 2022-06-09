@@ -18,32 +18,47 @@ const (
 	pageSize = 50
 )
 
-func NewAddOnListEncoder(addons ...*cmv1.AddOn) *AddOnListEncoder {
-	return &AddOnListEncoder{
-		Kind:  "AddOnList",
-		Page:  1,
-		Items: addons,
-		Size:  len(addons),
-		Total: len(addons),
-	}
+func NewAddOnListPager(addons ...*cmv1.AddOn) *AddOnListJSONPager {
+	var gen AddOnListJSONPager
+
+	gen.items = addons
+	gen.pageIndex = 1
+	gen.pageSize = pageSize
+
+	return &gen
 }
 
-type AddOnListEncoder struct {
-	Kind  string    `json:"kind"`
-	Page  int       `json:"page"`
-	Size  int       `json:"size"`
-	Total int       `json:"total"`
-	Items addOnList `json:"items"`
+type AddOnListJSONPager struct {
+	pageSize  int
+	pageIndex int
+	items     []*cmv1.AddOn
 }
 
-func (p *AddOnListEncoder) ToRoutes() ([]Route, error) {
-	buf, err := json.Marshal(p)
-	if err != nil {
-		return nil, err
+func (p *AddOnListJSONPager) ToRoutes() ([]Route, error) {
+	pages := make(map[int]string)
+
+	for i := 0; i < p.Pages(); i++ {
+		index := p.pageIndex
+
+		page, err := p.NextPage()
+		if err != nil {
+			return nil, err
+		}
+
+		pages[index] = page
 	}
 
 	handler := func(w http.ResponseWriter, r *http.Request) { //nolint:varnamelen
-		sdktesting.RespondWithJSON(http.StatusOK, string(buf))(w, r)
+		params := r.URL.Query()
+
+		pageIndex, err := strconv.Atoi(params.Get("page"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+
+			return
+		}
+
+		sdktesting.RespondWithJSON(http.StatusOK, pages[pageIndex])(w, r)
 	}
 
 	routes := []Route{
@@ -54,7 +69,7 @@ func (p *AddOnListEncoder) ToRoutes() ([]Route, error) {
 		},
 	}
 
-	for _, addon := range p.Items {
+	for _, addon := range p.items {
 		var buf bytes.Buffer
 
 		_ = cmv1.MarshalAddOnVersion(addon.Version(), &buf)
@@ -67,6 +82,46 @@ func (p *AddOnListEncoder) ToRoutes() ([]Route, error) {
 	}
 
 	return routes, nil
+}
+
+func (p *AddOnListJSONPager) Pages() int {
+	return int(math.Ceil(float64(len(p.items)) / float64(p.pageSize)))
+}
+
+func (p *AddOnListJSONPager) NextPage() (string, error) { //nolint
+	type addonListJSON struct {
+		Kind  string    `json:"kind"`
+		Page  int       `json:"page"`
+		Size  int       `json:"size"`
+		Total int       `json:"total"`
+		Items addOnList `json:"items"`
+	}
+
+	start := ((p.pageIndex - 1) * p.pageSize)
+	end := int(math.Min(float64(p.pageIndex*p.pageSize), float64(len(p.items))))
+
+	list := addonListJSON{
+		Kind:  "AddOnList",
+		Page:  p.pageIndex,
+		Total: len(p.items),
+	}
+
+	list.Size = len(p.items[start:end])
+	list.Items = addOnList(p.items[start:end])
+
+	if start >= len(p.items) {
+		list.Size = 0
+		list.Items = addOnList([]*cmv1.AddOn{})
+	}
+
+	buf, err := json.Marshal(list)
+	if err != nil {
+		return "", err
+	}
+
+	p.pageIndex++
+
+	return string(buf), nil
 }
 
 type addOnList []*cmv1.AddOn
@@ -310,7 +365,7 @@ func (p *ClusterListJSONPager) ToRoutes() ([]Route, error) {
 		addonsList = append(addonsList, addon)
 	}
 
-	addonRoutes, err := NewAddOnListEncoder(addonsList...).ToRoutes()
+	addonRoutes, err := NewAddOnListPager(addonsList...).ToRoutes()
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +425,7 @@ func (p *ClusterListJSONPager) Pages() int {
 	return int(math.Ceil(float64(len(p.items)) / float64(p.pageSize)))
 }
 
-func (p *ClusterListJSONPager) NextPage() (string, error) {
+func (p *ClusterListJSONPager) NextPage() (string, error) { //nolint
 	type clusterListJSON struct {
 		Kind  string      `json:"kind"`
 		Page  int         `json:"page"`
