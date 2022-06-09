@@ -85,7 +85,7 @@ func (e *OCMEnvironment) Clusters() []*cmv1.Cluster {
 }
 
 func (e *OCMEnvironment) AddClusterRoutes() error {
-	clusterRoutes, err := NewClusterListJSONEncoder(e.clusters...).ToRoutes()
+	clusterRoutes, err := NewClusterListPager(e.clusters...).ToRoutes()
 	if err != nil {
 		return err
 	}

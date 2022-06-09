@@ -5,11 +5,17 @@ package integration
 import (
 	"bytes"
 	"encoding/json"
+	"math"
 	"net/http"
+	"strconv"
 
 	amv1 "github.com/openshift-online/ocm-sdk-go/accountsmgmt/v1"
 	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 	sdktesting "github.com/openshift-online/ocm-sdk-go/testing"
+)
+
+const (
+	pageSize = 50
 )
 
 func NewAddOnListEncoder(addons ...*cmv1.AddOn) *AddOnListEncoder {
@@ -236,32 +242,47 @@ func AddOnVersion(version string) AddOnGenerateOption {
 	}
 }
 
-func NewClusterListJSONEncoder(clusters ...*cmv1.Cluster) *ClusterListJSONEncoder {
-	return &ClusterListJSONEncoder{
-		Kind:  "ClusterList",
-		Items: clusters,
-		Page:  1,
-		Size:  len(clusters),
-		Total: len(clusters),
-	}
+func NewClusterListPager(clusters ...*cmv1.Cluster) *ClusterListJSONPager {
+	var gen ClusterListJSONPager
+
+	gen.pageIndex = 1
+	gen.pageSize = pageSize
+	gen.items = clusters
+
+	return &gen
 }
 
-type ClusterListJSONEncoder struct {
-	Kind  string      `json:"kind"`
-	Page  int         `json:"page"`
-	Size  int         `json:"size"`
-	Total int         `json:"total"`
-	Items clusterList `json:"items"`
+type ClusterListJSONPager struct {
+	pageSize  int
+	pageIndex int
+	items     []*cmv1.Cluster
 }
 
-func (p *ClusterListJSONEncoder) ToRoutes() ([]Route, error) {
-	buf, err := json.Marshal(p)
-	if err != nil {
-		return nil, err
+func (p *ClusterListJSONPager) ToRoutes() ([]Route, error) {
+	pages := make(map[int]string)
+
+	for i := 0; i < p.Pages(); i++ {
+		index := p.pageIndex
+
+		page, err := p.NextPage()
+		if err != nil {
+			return nil, err
+		}
+
+		pages[index] = page
 	}
 
 	handler := func(w http.ResponseWriter, r *http.Request) { //nolint:varnamelen
-		sdktesting.RespondWithJSON(http.StatusOK, string(buf))(w, r)
+		params := r.URL.Query()
+
+		pageIndex, err := strconv.Atoi(params.Get("page"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+
+			return
+		}
+
+		sdktesting.RespondWithJSON(http.StatusOK, pages[pageIndex])(w, r)
 	}
 
 	var routes []Route
@@ -274,7 +295,7 @@ func (p *ClusterListJSONEncoder) ToRoutes() ([]Route, error) {
 
 	addons := make(map[*cmv1.AddOn]struct{})
 
-	for _, cluster := range p.Items {
+	for _, cluster := range p.items {
 		cRoutes, err := clusterRoute(cluster, addons)
 		if err != nil {
 			return nil, err
@@ -343,6 +364,46 @@ func clusterRoute(cluster *cmv1.Cluster, addons map[*cmv1.AddOn]struct{}) ([]Rou
 		subRoute,
 		addonsRoute,
 	}, nil
+}
+
+func (p *ClusterListJSONPager) Pages() int {
+	return int(math.Ceil(float64(len(p.items)) / float64(p.pageSize)))
+}
+
+func (p *ClusterListJSONPager) NextPage() (string, error) {
+	type clusterListJSON struct {
+		Kind  string      `json:"kind"`
+		Page  int         `json:"page"`
+		Size  int         `json:"size"`
+		Total int         `json:"total"`
+		Items clusterList `json:"items"`
+	}
+
+	start := ((p.pageIndex - 1) * p.pageSize)
+	end := int(math.Min(float64(p.pageIndex*p.pageSize), float64(len(p.items))))
+
+	list := clusterListJSON{
+		Kind:  "ClusterList",
+		Page:  p.pageIndex,
+		Total: len(p.items),
+	}
+
+	list.Size = len(p.items[start:end])
+	list.Items = clusterList(p.items[start:end])
+
+	if start >= len(p.items) {
+		list.Size = 0
+		list.Items = clusterList([]*cmv1.Cluster{})
+	}
+
+	buf, err := json.Marshal(list)
+	if err != nil {
+		return "", err
+	}
+
+	p.pageIndex++
+
+	return string(buf), nil
 }
 
 type clusterList []*cmv1.Cluster
