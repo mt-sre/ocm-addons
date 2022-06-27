@@ -12,7 +12,7 @@ require (
 	github.com/pterm/pterm v0.12.42
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.7.2
+	github.com/stretchr/testify v1.7.5
 	go.uber.org/multierr v1.8.0
 )
 
@@ -84,5 +84,5 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/google/go-github/v43 v43.0.0
-	github.com/stretchr/objx v0.3.0 // indirect
+	github.com/stretchr/objx v0.4.0 // indirect
 )
