@@ -566,7 +566,6 @@ func GenerateCluster(options ...ClusterGenerateOption) (*cmv1.Cluster, error) { 
 		ID(gen.id).
 		HREF(slashJoin("/api/clusters_mgmt/v1/clusters", gen.id)).
 		Name(gen.name).
-		DisplayName(gen.name).
 		ExternalID(gen.externalID).
 		OpenshiftVersion(gen.openshiftVersion).
 		CloudProvider(cloudProvider).
