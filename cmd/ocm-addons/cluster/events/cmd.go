@@ -6,6 +6,8 @@ import (
 
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -51,7 +53,9 @@ func (o *options) ParseOptions() {
 }
 
 func parseLogLevel(maybeLvl string) ocm.LogLevel {
-	switch strings.Title(strings.ToLower(maybeLvl)) {
+	usTitler := cases.Title(language.AmericanEnglish)
+
+	switch usTitler.String(strings.ToLower(maybeLvl)) {
 	case ocm.LogLevelDebug:
 		return ocm.LogLevelDebug
 	case ocm.LogLevelInfo:

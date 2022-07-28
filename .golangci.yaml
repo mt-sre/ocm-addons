@@ -11,6 +11,7 @@ linters:
   - maligned
   - scopelint
   # Only meant to be applied selectively.
+  - exhaustruct
   - exhaustivestruct
   # Promotes use of trivially shortened statements rather than
   # lower complexity functions.
@@ -25,6 +26,8 @@ linters:
   # Interface returns are currently used to wrap chained methods
   # methods from the 'ocm-sdk'.
   - ireturn
+  # Incorrectly reports '_' prefixed package globals
+  - nosnakecase
   # Does not support map[string]testcase style subtests.
   - paralleltest
   # Ineffective for foreign schemas

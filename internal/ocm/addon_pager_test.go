@@ -121,7 +121,7 @@ func (a *addonsListRequestMock) Search(query string) addonsListRequester {
 func (a *addonsListRequestMock) RequestPage(ctx context.Context, page, size int) (addonsListResponser, error) {
 	args := a.Called()
 
-	return args.Get(0).(*addonsListResponseMock), args.Error(1)
+	return args.Get(0).(*addonsListResponseMock), args.Error(1) //nolint:forcetypeassert
 }
 
 type addonsListResponseMock struct {
@@ -131,7 +131,7 @@ type addonsListResponseMock struct {
 func (a *addonsListResponseMock) Items() *cmv1.AddOnList {
 	args := a.Called()
 
-	return args.Get(0).(*cmv1.AddOnList)
+	return args.Get(0).(*cmv1.AddOnList) //nolint:forcetypeassert
 }
 
 func (a *addonsListResponseMock) Size() int {
