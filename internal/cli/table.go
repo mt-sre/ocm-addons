@@ -270,7 +270,7 @@ type Pager struct {
 	done chan error
 }
 
-func (p *Pager) Write(b []byte) (n int, err error) {
+func (p *Pager) Write(b []byte) (int, error) {
 	return p.pIn.Write(b)
 }
 

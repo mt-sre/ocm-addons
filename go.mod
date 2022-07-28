@@ -21,6 +21,17 @@ require gopkg.in/yaml.v3 v3.0.1
 require github.com/mt-sre/go-ci v0.3.3
 
 require (
+	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
+	golang.org/x/text v0.3.7
+)
+
+require (
+	github.com/blang/semver/v4 v4.0.0
+	github.com/go-playground/validator/v10 v10.11.0
+	github.com/google/go-github/v43 v43.0.0
+)
+
+require (
 	atomicgo.dev/cursor v0.1.1 // indirect
 	atomicgo.dev/keyboard v0.2.8 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
@@ -58,7 +69,6 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.18 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -77,12 +87,5 @@ require (
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
 	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
-)
-
-require (
-	github.com/blang/semver/v4 v4.0.0
-	github.com/go-playground/validator/v10 v10.11.0
-	github.com/google/go-github/v43 v43.0.0
 )

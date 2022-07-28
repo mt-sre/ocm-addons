@@ -123,7 +123,7 @@ func (a *clustersListRequestMock) Search(query string) clustersListRequester {
 func (a *clustersListRequestMock) RequestPage(ctx context.Context, page, size int) (clustersListResponser, error) {
 	args := a.Called()
 
-	return args.Get(0).(*clustersListResponseMock), args.Error(1)
+	return args.Get(0).(*clustersListResponseMock), args.Error(1) //nolint:forcetypeassert
 }
 
 var _ clustersListResponser = (*clustersListResponseMock)(nil)
@@ -135,7 +135,7 @@ type clustersListResponseMock struct {
 func (a *clustersListResponseMock) Items() *cmv1.ClusterList {
 	args := a.Called()
 
-	return args.Get(0).(*cmv1.ClusterList)
+	return args.Get(0).(*cmv1.ClusterList) //nolint:forcetypeassert
 }
 
 func (a *clustersListResponseMock) Size() int {
