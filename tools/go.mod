@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/golangci/golangci-lint v1.47.2
-	github.com/goreleaser/goreleaser v1.10.3
+	github.com/goreleaser/goreleaser v1.6.3
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/openshift-online/ocm-cli v0.1.62
 	github.com/uw-labs/lichen v0.1.5
@@ -49,8 +49,10 @@ require (
 	github.com/OpenPeeDeeP/depguard v1.1.0 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210512092938-c05353c2d58c // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
+	github.com/alecthomas/jsonschema v0.0.0-20211209230136-e2b41affa5c1 // indirect
 	github.com/alexkohler/prealloc v1.0.0 // indirect
 	github.com/alingse/asasalint v0.0.10 // indirect
+	github.com/apex/log v1.9.0 // indirect
 	github.com/ashanbrown/forbidigo v1.3.0 // indirect
 	github.com/ashanbrown/makezero v1.1.1 // indirect
 	github.com/atc0005/go-teams-notify/v2 v2.6.1 // indirect
@@ -81,12 +83,10 @@ require (
 	github.com/caarlos0/env/v6 v6.9.3 // indirect
 	github.com/caarlos0/go-reddit/v3 v3.0.1 // indirect
 	github.com/caarlos0/go-shellwords v1.0.12 // indirect
-	github.com/caarlos0/log v0.1.1 // indirect
 	github.com/cavaliergopher/cpio v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/charithe/durationcheck v0.0.9 // indirect
-	github.com/charmbracelet/lipgloss v0.5.1-0.20220615005615-2e17a8a06096 // indirect
 	github.com/chavacava/garif v0.0.0-20220316182200-5cad0b5181d4 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/daixiang0/gci v0.4.3 // indirect
@@ -134,7 +134,7 @@ require (
 	github.com/golangci/revgrep v0.0.0-20210930125155-c22e5001d4f2 // indirect
 	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/google/go-github/v45 v45.2.0 // indirect
+	github.com/google/go-github/v43 v43.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/licenseclassifier v0.0.0-20201113175434-78a70215ca36 // indirect
 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
@@ -164,7 +164,6 @@ require (
 	github.com/iancoleman/orderedmap v0.2.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/invopop/jsonschema v0.5.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jgautheron/goconst v1.5.1 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
@@ -206,10 +205,10 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/moricho/tparallel v0.2.1 // indirect
+	github.com/muesli/coral v1.0.0 // indirect
 	github.com/muesli/mango v0.1.0 // indirect
-	github.com/muesli/mango-cobra v1.2.0 // indirect
+	github.com/muesli/mango-coral v1.0.1 // indirect
 	github.com/muesli/mango-pflag v0.1.0 // indirect
-	github.com/muesli/reflow v0.2.1-0.20210115123740-9e1d0d53df68 // indirect
 	github.com/muesli/roff v0.1.0 // indirect
 	github.com/muesli/termenv v0.12.1-0.20220615005108-4e9068de9898 // indirect
 	github.com/nakabonne/nestif v0.3.1 // indirect
