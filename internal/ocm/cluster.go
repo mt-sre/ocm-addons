@@ -58,7 +58,6 @@ func (c *Cluster) ProvideRowData() map[string]interface{} {
 		"Console URL":                      c.cluster.Console().URL(),
 		"Creation Timestamp":               c.cluster.CreationTimestamp(),
 		"Disable User Workload Monitoring": c.cluster.DisableUserWorkloadMonitoring(),
-		"Display Name":                     c.cluster.DisplayName(),
 		"DNS Base Domain":                  c.cluster.DNS().BaseDomain(),
 		"ETCD Encryption":                  c.cluster.EtcdEncryption(),
 		"Expiration Timestamp":             c.cluster.ExpirationTimestamp(),
