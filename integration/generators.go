@@ -474,7 +474,7 @@ func (l clusterList) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func GenerateCluster(options ...ClusterGenerateOption) (*cmv1.Cluster, error) { // nolint:cyclop
+func GenerateCluster(options ...ClusterGenerateOption) (*cmv1.Cluster, error) { //nolint:cyclop
 	var gen ClusterGenerator
 
 	for _, opt := range options {
