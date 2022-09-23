@@ -266,33 +266,21 @@ var lichen = command.NewCommandAlias(filepath.Join(_depBin, "lichen"))
 // Ensures dependencies are correctly updated in the 'go.mod'
 // and 'go.sum' files.
 func (Check) Tidy(ctx context.Context) error {
-	if err := tidyVersion(ctx, "1.16"); err != nil {
-		return fmt.Errorf("tidying go.mod: %w", err)
-	}
-
-	if err := tidyVersion(ctx, "1.17"); err != nil {
-		return fmt.Errorf("tidying go.mod: %w", err)
-	}
-
-	return nil
-}
-
-func tidyVersion(ctx context.Context, version string) error {
 	tidy := gocmd(
-		command.WithArgs{"mod", "tidy", "-go=" + version},
+		command.WithArgs{"mod", "tidy"},
 		command.WithConsoleOut(mg.Verbose()),
 		command.WithContext{Context: ctx},
 	)
 
 	if err := tidy.Run(); err != nil {
-		return fmt.Errorf("starting to tidy go %s dependencies: %w", version, err)
+		return fmt.Errorf("starting to tidy go dependencies: %w", err)
 	}
 
 	if tidy.Success() {
 		return nil
 	}
 
-	return fmt.Errorf("tidying go %s dependencies: %w", version, tidy.Error())
+	return fmt.Errorf("tidying go dependencies: %w", tidy.Error())
 }
 
 // Ensures package dependencies have not been tampered with since download.

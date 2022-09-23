@@ -9,3 +9,12 @@ updates:
   commit-message:
     prefix: fix
     include: scope
+- package-ecosystem: gomod
+  directory: /tools
+  schedule:
+    interval: daily
+  labels:
+  - kind/deps
+  commit-message:
+    prefix: fix
+    include: scope
