@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/golangci/golangci-lint v1.49.0
 	github.com/goreleaser/goreleaser v1.6.3
-	github.com/onsi/ginkgo/v2 v2.1.4
+	github.com/onsi/ginkgo/v2 v2.2.0
 	github.com/openshift-online/ocm-cli v0.1.62
 	github.com/uw-labs/lichen v0.1.7
 )
