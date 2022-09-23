@@ -7,7 +7,7 @@ require (
 	github.com/goreleaser/goreleaser v1.6.3
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/openshift-online/ocm-cli v0.1.62
-	github.com/uw-labs/lichen v0.1.5
+	github.com/uw-labs/lichen v0.1.7
 )
 
 require (
@@ -274,7 +274,7 @@ require (
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/ultraware/funlen v0.0.3 // indirect
 	github.com/ultraware/whitespace v0.0.5 // indirect
-	github.com/urfave/cli/v2 v2.3.0 // indirect
+	github.com/urfave/cli/v2 v2.4.0 // indirect
 	github.com/uudashr/gocognit v1.0.6 // indirect
 	github.com/xanzy/go-gitlab v0.68.2 // indirect
 	github.com/xanzy/ssh-agent v0.3.1 // indirect
