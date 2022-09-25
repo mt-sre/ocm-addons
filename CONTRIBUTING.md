@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Contributing
 
 ## Before Opening a Pull Request

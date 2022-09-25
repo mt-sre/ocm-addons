@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 function main() {
      curl -L "$(download_url)" | tar xvz ocm-addons
 }

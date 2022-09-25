@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # OCM-AddOns plug-in
 
 ## Overview
@@ -69,4 +75,9 @@ No issues have been reported at this time.
 
 ## License
 
-Apache License 2.0, see [LICENSE](LICENSE).
+Apache License 2.0, see [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt).
+
+This repository complies with the REUSE [specification](https://reuse.software/spec/)
+and any new files added will be checked for compliance. This means that an appropriate
+SPDX header must be present for new files which can be added manually or by using
+the REUSE [tool](https://git.fsfe.org/reuse/tool).
