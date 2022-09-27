@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -euo pipefail
 
 export PROJECT_ROOT="${PWD}"

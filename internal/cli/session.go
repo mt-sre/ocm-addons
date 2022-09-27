@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+//
+// SPDX-License-Identifier: Apache-2.0
+
 // Package session wraps ocm session parameters to be accessed during cli
 // commands. For example both the active connection and logger can be
 // retrieved from the current session.

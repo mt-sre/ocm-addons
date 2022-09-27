@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 # Sets match confidence to 90%.
 # See https://pkg.go.dev/github.com/google/licensecheck for more information.

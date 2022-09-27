@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 ---
 default_stages:
   - commit
@@ -63,6 +67,11 @@ repos:
     files: '(\bgo\.mod$)|(\.lichen\.ya?ml$)'
     pass_filenames: false
     require_serial: true
+
+- repo: https://github.com/fsfe/reuse-tool
+  rev: v1.0.0
+  hooks:
+  - id: reuse
 
 
 # Pre-Push

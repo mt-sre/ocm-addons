@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: ocm-addons
+Upstream-Contact: Red Hat Inc. <sd-mt-sre@redhat.com>
+Source: https://github.com/mt-sre/ocm-addons
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Red Hat, Inc. <sd-mt-sre@redhat.com>
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 <!-- If this PR is linked to a Jira ticket prefix your title with '[<PROJECT>-<KEY>] - '-->
 ### Summary
 <!-- Briefly describe what this PR accomplishes -->
