@@ -18,7 +18,7 @@ import (
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/mt-sre/go-ci/command"
-	"github.com/mt-sre/ocm-addons/internal/tools"
+	"github.com/mt-sre/go-ci/web"
 )
 
 var Aliases = map[string]interface{}{
@@ -183,7 +183,7 @@ func (Deps) UpdatePreCommit(ctx context.Context) error {
 			return fmt.Errorf("inspecting output location %q: %w", out, err)
 		}
 
-		if err := tools.DownloadFile(ctx, urlPrefix+fmt.Sprintf("/v%s/pre-commit-%s.pyz", version, version), out); err != nil {
+		if err := web.DownloadFile(ctx, urlPrefix+fmt.Sprintf("/v%s/pre-commit-%s.pyz", version, version), out); err != nil {
 			return fmt.Errorf("downloading pre-commit: %w", err)
 		}
 	}
@@ -211,7 +211,7 @@ func (Check) Lint(ctx context.Context) error {
 
 	run := golancilint(
 		command.WithArgs{"run"},
-		command.WithArgs(tools.GoVerboseFlag()),
+		command.WithArgs(goVerboseFlag()),
 		command.WithContext{Context: ctx},
 	)
 
@@ -427,7 +427,7 @@ type Test mg.Namespace
 func (Test) Unit(ctx context.Context) error {
 	test := gocmd(
 		command.WithArgs{"test", "-race"},
-		command.WithArgs(tools.GoVerboseFlag()),
+		command.WithArgs(goVerboseFlag()),
 		command.WithArgs{"./cmd/...", "./internal/..."},
 		command.WithConsoleOut(mg.Verbose()),
 		command.WithContext{Context: ctx},
@@ -462,7 +462,7 @@ func (Test) Integration(ctx context.Context) error {
 			"--race",
 			"--trace",
 		},
-		command.WithArgs(tools.GoVerboseFlag()),
+		command.WithArgs(goVerboseFlag()),
 		command.WithArgs{"integration"},
 		command.WithConsoleOut(mg.Verbose()),
 		command.WithContext{Context: ctx},
@@ -571,3 +571,11 @@ func (Hooks) RunAllFiles(ctx context.Context) error {
 }
 
 var precommit = command.NewCommandAlias(filepath.Join(_depBin, "pre-commit"))
+
+func goVerboseFlag() []string {
+	if !mg.Verbose() {
+		return []string{}
+	}
+
+	return []string{"-v"}
+}
