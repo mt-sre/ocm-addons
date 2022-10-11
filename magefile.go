@@ -13,11 +13,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/mt-sre/go-ci/command"
+	"github.com/mt-sre/go-ci/git"
 	"github.com/mt-sre/go-ci/web"
 )
 
@@ -89,16 +89,15 @@ var _projectRoot = func() string {
 		return root
 	}
 
-	topLevel := git(command.WithArgs{"rev-parse", "--show-toplevel"})
-
-	if err := topLevel.Run(); err != nil || !topLevel.Success() {
-		panic("failed to get working directory")
+	topLevel, err := git.RevParse(context.Background(),
+		git.WithRevParseFormat(git.RevParseFormatTopLevel),
+	)
+	if err != nil {
+		panic(err)
 	}
 
-	return strings.TrimSpace(topLevel.Stdout())
+	return topLevel
 }()
-
-var git = command.NewCommandAlias("git")
 
 type Deps mg.Namespace
 
