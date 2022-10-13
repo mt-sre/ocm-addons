@@ -9,7 +9,7 @@ go 1.18
 require (
 	github.com/apex/log v1.9.0
 	github.com/magefile/mage v1.14.0
-	github.com/onsi/ginkgo/v2 v2.3.0
+	github.com/onsi/ginkgo/v2 v2.3.1
 	github.com/onsi/gomega v1.22.1
 	github.com/openshift-online/ocm-cli v0.1.64
 	github.com/openshift-online/ocm-sdk-go v0.1.287
