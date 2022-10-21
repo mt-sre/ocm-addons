@@ -8,7 +8,7 @@ go 1.18
 
 require (
 	github.com/golangci/golangci-lint v1.50.0
-	github.com/goreleaser/goreleaser v1.12.1
+	github.com/goreleaser/goreleaser v1.12.3
 	github.com/onsi/ginkgo/v2 v2.3.1
 	github.com/openshift-online/ocm-cli v0.1.64
 	github.com/uw-labs/lichen v0.1.7
@@ -79,7 +79,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.10 // indirect
 	github.com/aws/smithy-go v1.12.0 // indirect
-	github.com/aymanbagabas/go-osc52 v1.0.3 // indirect
+	github.com/aymanbagabas/go-osc52 v1.2.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bkielbasa/cyclop v1.2.0 // indirect
@@ -93,7 +93,7 @@ require (
 	github.com/caarlos0/env/v6 v6.10.1 // indirect
 	github.com/caarlos0/go-reddit/v3 v3.0.1 // indirect
 	github.com/caarlos0/go-shellwords v1.0.12 // indirect
-	github.com/caarlos0/log v0.1.8 // indirect
+	github.com/caarlos0/log v0.1.10 // indirect
 	github.com/cavaliergopher/cpio v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
@@ -151,7 +151,7 @@ require (
 	github.com/golangci/revgrep v0.0.0-20220804021717-745bb2f7c2e6 // indirect
 	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/google/go-github/v47 v47.1.0 // indirect
+	github.com/google/go-github/v48 v48.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/licenseclassifier v0.0.0-20201113175434-78a70215ca36 // indirect
 	github.com/google/pprof v0.0.0-20220608213341-c488b8fa1db3 // indirect
@@ -229,7 +229,7 @@ require (
 	github.com/muesli/mango-pflag v0.1.0 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/roff v0.1.0 // indirect
-	github.com/muesli/termenv v0.12.1-0.20220901123159-d729275e0977 // indirect
+	github.com/muesli/termenv v0.13.0 // indirect
 	github.com/nakabonne/nestif v0.3.1 // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 // indirect
 	github.com/nishanths/exhaustive v0.8.3 // indirect
@@ -314,7 +314,7 @@ require (
 	golang.org/x/net v0.0.0-20220805013720-a33c5aa5df48 // indirect
 	golang.org/x/oauth2 v0.0.0-20220722155238-128564f6959c // indirect
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde // indirect
-	golang.org/x/sys v0.0.0-20220915200043-7b5979e65e41 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220722155302-e5dcc9cfc0b9 // indirect
