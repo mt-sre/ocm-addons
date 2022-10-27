@@ -10,7 +10,7 @@ require (
 	github.com/apex/log v1.9.0
 	github.com/magefile/mage v1.14.0
 	github.com/onsi/ginkgo/v2 v2.4.0
-	github.com/onsi/gomega v1.22.1
+	github.com/onsi/gomega v1.23.0
 	github.com/openshift-online/ocm-cli v0.1.64
 	github.com/openshift-online/ocm-sdk-go v0.1.290
 	github.com/pterm/pterm v0.12.49
@@ -52,7 +52,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gookit/color v1.5.2 // indirect
