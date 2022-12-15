@@ -22,7 +22,7 @@ require (
 
 require gopkg.in/yaml.v3 v3.0.1
 
-require github.com/mt-sre/go-ci v0.6.1
+require github.com/mt-sre/go-ci v0.6.2
 
 require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
