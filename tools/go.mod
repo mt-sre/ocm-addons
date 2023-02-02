@@ -8,7 +8,7 @@ go 1.19
 
 require (
 	github.com/golangci/golangci-lint v1.50.1
-	github.com/goreleaser/goreleaser v1.15.0
+	github.com/goreleaser/goreleaser v1.15.1
 	github.com/onsi/ginkgo/v2 v2.8.0
 	github.com/openshift-online/ocm-cli v0.1.65
 	github.com/uw-labs/lichen v0.1.7
@@ -343,7 +343,7 @@ require (
 	github.com/uudashr/gocognit v1.0.6 // indirect
 	github.com/vbatts/tar-split v0.11.2 // indirect
 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1 // indirect
-	github.com/xanzy/go-gitlab v0.79.0 // indirect
+	github.com/xanzy/go-gitlab v0.79.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/yagipy/maintidx v1.0.0 // indirect
 	github.com/yeya24/promlinter v0.2.0 // indirect
