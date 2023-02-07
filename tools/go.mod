@@ -7,7 +7,7 @@ module tools
 go 1.19
 
 require (
-	github.com/golangci/golangci-lint v1.51.0
+	github.com/golangci/golangci-lint v1.51.1
 	github.com/goreleaser/goreleaser v1.15.1
 	github.com/onsi/ginkgo/v2 v2.8.0
 	github.com/openshift-online/ocm-cli v0.1.65
@@ -158,7 +158,7 @@ require (
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/go-toolsmith/astcast v1.0.0 // indirect
-	github.com/go-toolsmith/astcopy v1.0.2 // indirect
+	github.com/go-toolsmith/astcopy v1.0.3 // indirect
 	github.com/go-toolsmith/astequal v1.0.3 // indirect
 	github.com/go-toolsmith/astfmt v1.0.0 // indirect
 	github.com/go-toolsmith/astp v1.0.0 // indirect
@@ -192,7 +192,7 @@ require (
 	github.com/google/wire v0.5.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.1 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
-	github.com/gordonklaus/ineffassign v0.0.0-20210914165742-4cc7213b9bc8 // indirect
+	github.com/gordonklaus/ineffassign v0.0.0-20230107090616-13ace0543b28 // indirect
 	github.com/goreleaser/chglog v0.3.0 // indirect
 	github.com/goreleaser/fileglob v1.3.0 // indirect
 	github.com/goreleaser/nfpm/v2 v2.24.0 // indirect
@@ -222,7 +222,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/julz/importas v0.1.0 // indirect
-	github.com/junk1tm/musttag v0.4.3 // indirect
+	github.com/junk1tm/musttag v0.4.4 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/kisielk/errcheck v1.6.3 // indirect
@@ -272,7 +272,7 @@ require (
 	github.com/nbutton23/zxcvbn-go v0.0.0-20210217022336-fa2cb2858354 // indirect
 	github.com/nishanths/exhaustive v0.9.5 // indirect
 	github.com/nishanths/predeclared v0.2.2 // indirect
-	github.com/nunnatsa/ginkgolinter v0.7.1 // indirect
+	github.com/nunnatsa/ginkgolinter v0.8.1 // indirect
 	github.com/nwidger/jsoncolor v0.3.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
@@ -298,8 +298,8 @@ require (
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/ryancurrah/gomodguard v1.3.0 // indirect
-	github.com/ryanrolds/sqlclosecheck v0.3.0 // indirect
-	github.com/sanposhiho/wastedassign/v2 v2.0.6 // indirect
+	github.com/ryanrolds/sqlclosecheck v0.4.0 // indirect
+	github.com/sanposhiho/wastedassign/v2 v2.0.7 // indirect
 	github.com/sasha-s/go-csync v0.0.0-20210812194225-61421b77c44b // indirect
 	github.com/sashamelentyev/interfacebloat v1.1.0 // indirect
 	github.com/sashamelentyev/usestdlibvars v1.21.1 // indirect
@@ -316,7 +316,7 @@ require (
 	github.com/skeema/knownhosts v1.1.0 // indirect
 	github.com/slack-go/slack v0.12.1 // indirect
 	github.com/sonatard/noctx v0.0.1 // indirect
-	github.com/sourcegraph/go-diff v0.6.2-0.20221031073116-7ef5f68ebea1 // indirect
+	github.com/sourcegraph/go-diff v0.7.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/cobra v1.6.1 // indirect
@@ -336,7 +336,7 @@ require (
 	github.com/timakin/bodyclose v0.0.0-20221125081123-e39cf3fc478e // indirect
 	github.com/timonwong/loggercheck v0.9.3 // indirect
 	github.com/titanous/rocacheck v0.0.0-20171023193734-afe73141d399 // indirect
-	github.com/tomarrell/wrapcheck/v2 v2.7.0 // indirect
+	github.com/tomarrell/wrapcheck/v2 v2.8.0 // indirect
 	github.com/tommy-muehle/go-mnd/v2 v2.5.1 // indirect
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.11 // indirect
@@ -385,7 +385,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	honnef.co/go/tools v0.4.0-0.dev.0.20221209223220-58c4d7e4b720 // indirect
+	honnef.co/go/tools v0.4.0 // indirect
 	k8s.io/apimachinery v0.25.3 // indirect
 	mvdan.cc/gofumpt v0.4.0 // indirect
 	mvdan.cc/interfacer v0.0.0-20180901003855-c20040233aed // indirect
