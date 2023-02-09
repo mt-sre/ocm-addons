@@ -26,7 +26,7 @@ require github.com/mt-sre/go-ci v0.6.4
 
 require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
-	golang.org/x/text v0.6.0
+	golang.org/x/text v0.7.0
 )
 
 require (
