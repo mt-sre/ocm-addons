@@ -60,6 +60,7 @@ func run(opts *options) func(*cobra.Command, []string) error {
 			cli.WithNoColor(opts.NoColor),
 			cli.WithNoHeaders(opts.NoHeaders),
 			cli.WithPager(sess.Pager()),
+			cli.WithOutput{Out: cmd.OutOrStdout()},
 		)
 		if err != nil {
 			return fmt.Errorf("creating table: %w", err)

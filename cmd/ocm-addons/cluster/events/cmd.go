@@ -103,7 +103,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 
 func run(opts *options) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		ctx := cmd.Root().Context()
+		ctx := cmd.Context()
 
 		opts.ParseOptions()
 
@@ -119,6 +119,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 			cli.WithNoHeaders(opts.NoHeaders),
 			cli.WithNoColor(opts.NoColor),
 			cli.WithPager(sess.Pager()),
+			cli.WithOutput{Out: cmd.OutOrStdout()},
 		)
 		if err != nil {
 			return err

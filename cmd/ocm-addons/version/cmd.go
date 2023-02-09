@@ -6,7 +6,6 @@ package version
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/mt-sre/ocm-addons/internal/meta"
 	"github.com/spf13/cobra"
@@ -55,7 +54,7 @@ func run(opts *options) func(*cobra.Command, []string) error {
 			version = meta.LongVersion()
 		}
 
-		_, err := fmt.Fprintln(os.Stdout, version)
+		_, err := fmt.Fprintln(cmd.OutOrStdout(), version)
 
 		return err
 	}

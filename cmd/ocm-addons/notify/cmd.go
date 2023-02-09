@@ -7,7 +7,6 @@ package notify
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/notify/list"
@@ -51,7 +50,11 @@ func generateCommand(run func(*cobra.Command, []string) error) *cobra.Command {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	ctx := cmd.Root().Context()
+	var (
+		ctx = cmd.Context()
+		in  = cmd.InOrStdin()
+		out = cmd.OutOrStdout()
+	)
 
 	sess, err := cli.NewSession()
 	if err != nil {
@@ -96,26 +99,26 @@ func run(cmd *cobra.Command, args []string) error {
 	matchingClusters := pager.SearchByNameOrID(search)
 
 	return matchingClusters.ForEach(ctx, func(c *ocm.Cluster) error {
-		fmt.Fprintf(os.Stdout, "Cluster External ID: %s\n", c.ExternalID())
-		fmt.Fprintf(os.Stdout, "Description: %s\n", cfg.Description)
-		fmt.Fprintf(os.Stdout, "Service Name: %s\n", cfg.ServiceName)
-		fmt.Fprintf(os.Stdout, "Severity: %s\n", cfg.Severity)
-		fmt.Fprintf(os.Stdout, "Summary: %s\n", cfg.Summary)
-		fmt.Fprintf(os.Stdout, "Internal Only: %s\n", fmt.Sprint(cfg.InternalOnly))
+		fmt.Fprintf(out, "Cluster External ID: %s\n", c.ExternalID())
+		fmt.Fprintf(out, "Description: %s\n", cfg.Description)
+		fmt.Fprintf(out, "Service Name: %s\n", cfg.ServiceName)
+		fmt.Fprintf(out, "Severity: %s\n", cfg.Severity)
+		fmt.Fprintf(out, "Summary: %s\n", cfg.Summary)
+		fmt.Fprintf(out, "Internal Only: %s\n", fmt.Sprint(cfg.InternalOnly))
 
-		if !cli.PromptYesOrNo(os.Stdout, os.Stdin, "Please confirm before sending this notification") {
-			fmt.Fprintln(os.Stdout, "notification cancelled")
+		if !cli.PromptYesOrNo(out, in, "Please confirm before sending this notification") {
+			fmt.Fprintln(out, "notification cancelled")
 
 			return nil
 		}
 
-		fmt.Fprintln(os.Stdout, "sending notification...")
+		fmt.Fprintln(out, "sending notification...")
 
 		if err := c.PostLog(ctx, entryOpts...); err != nil {
 			return fmt.Errorf("failed to send notification: %w", err)
 		}
 
-		fmt.Fprintln(os.Stdout, "notification sent successfully")
+		fmt.Fprintln(out, "notification sent successfully")
 
 		return nil
 	})

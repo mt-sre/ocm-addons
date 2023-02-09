@@ -51,7 +51,11 @@ func generateCommand(_ *options, run func(*cobra.Command, []string) error) *cobr
 
 func run(vu cli.VersionUpdater, _ *options) func(*cobra.Command, []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		ctx := cmd.Root().Context()
+		var (
+			ctx = cmd.Context()
+			in  = cmd.InOrStdin()
+			out = cmd.OutOrStdout()
+		)
 
 		latest, err := vu.GetLatestVersion(ctx)
 		if err != nil {
@@ -63,7 +67,13 @@ func run(vu cli.VersionUpdater, _ *options) func(*cobra.Command, []string) error
 		log.Debug(fmt.Sprintf("Found current version %s\n", current))
 		log.Debug(fmt.Sprintf("Found latest version %s\n", latest))
 
-		if !shouldUpdate(current, latest) {
+		if upToDate(current, latest) {
+			fmt.Fprintf(out, "The current version %s is already up-to-date.\n", current)
+
+			return nil
+		}
+
+		if !cli.PromptYesOrNo(out, in, fmt.Sprintf("Would you like to update to version %s?", latest)) {
 			return nil
 		}
 
@@ -101,17 +111,7 @@ func run(vu cli.VersionUpdater, _ *options) func(*cobra.Command, []string) error
 	}
 }
 
-func shouldUpdate(current, latest string) bool {
-	if isUpToDate(current, latest) {
-		fmt.Fprintf(os.Stdout, "The current version %s is already up-to-date.\n", current)
-
-		return false
-	}
-
-	return cli.PromptYesOrNo(os.Stdout, os.Stdin, fmt.Sprintf("Would you like to update to version %s?", latest))
-}
-
-func isUpToDate(current, latest string) bool {
+func upToDate(current, latest string) bool {
 	curVer, err := semver.ParseTolerant(current)
 	if err != nil {
 		return false

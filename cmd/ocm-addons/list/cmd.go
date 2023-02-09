@@ -49,7 +49,7 @@ func generateCommand(opts *options, run func(*cobra.Command, []string) error) *c
 
 func run(opts *options) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		ctx := cmd.Root().Context()
+		ctx := cmd.Context()
 
 		sess, err := cli.NewSession()
 		if err != nil {
@@ -63,6 +63,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 			cli.WithNoColor(opts.NoColor),
 			cli.WithNoHeaders(opts.NoHeaders),
 			cli.WithPager(sess.Pager()),
+			cli.WithOutput{Out: cmd.OutOrStdout()},
 		)
 		if err != nil {
 			return fmt.Errorf("initializing table: %w", err)

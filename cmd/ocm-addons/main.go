@@ -5,7 +5,9 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
 
 	"github.com/apex/log"
 	apexcli "github.com/apex/log/handlers/cli"
@@ -22,13 +24,23 @@ import (
 var verbosity int
 
 func main() {
+	code := 0
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
+
+	defer func() {
+		stop()
+
+		os.Exit(code)
+	}()
+
 	rootCmd := generateRootCmd()
 
-	if err := rootCmd.Execute(); err != nil {
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		log.
 			WithError(err).
 			Error("ocm addons exited unexpectedly")
-		os.Exit(1)
+
+		code = 1
 	}
 }
 
