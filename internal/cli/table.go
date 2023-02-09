@@ -155,10 +155,10 @@ type TableOption interface {
 	ConfigureTable(*TableConfig)
 }
 
-type WithOutput struct{ w io.Writer }
+type WithOutput struct{ Out io.Writer }
 
 func (wo WithOutput) ConfigureTable(c *TableConfig) {
-	c.Out = wo.w
+	c.Out = wo.Out
 }
 
 type WithColumns string
