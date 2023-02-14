@@ -5,12 +5,12 @@
 //go:build windows
 // +build windows
 
-package run
+package signals
 
 import (
 	"os"
 )
 
-func shutdownSignals() []os.Signal {
+func ShutdownSignals() []os.Signal {
 	return []os.Signal{os.Interrupt}
 }
