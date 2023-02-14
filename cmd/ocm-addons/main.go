@@ -5,7 +5,10 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"os"
+	"os/signal"
 
 	"github.com/apex/log"
 	apexcli "github.com/apex/log/handlers/cli"
@@ -16,24 +19,31 @@ import (
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/update"
 	"github.com/mt-sre/ocm-addons/cmd/ocm-addons/version"
 	"github.com/mt-sre/ocm-addons/internal/cli"
-	"github.com/mt-sre/ocm-addons/internal/cli/run"
+	"github.com/mt-sre/ocm-addons/internal/cli/signals"
 	"github.com/spf13/cobra"
 )
 
 var verbosity int
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), signals.ShutdownSignals()...)
+
+	var code int
+
+	defer func() {
+		stop()
+
+		os.Exit(code)
+	}()
+
 	rootCmd := generateRootCmd()
+	if err := rootCmd.ExecuteContext(ctx); err != nil && !errors.Is(err, context.Canceled) {
+		log.
+			WithError(err).
+			Error("ocm addons exited unexpectedly")
 
-	runner := run.NewRunner(
-		run.WithErrHandler(func(err error) {
-			log.
-				WithError(err).
-				Error("ocm addons exited unexpectedly")
-		}),
-	)
-
-	os.Exit(runner.Run(rootCmd.ExecuteContext))
+		code = 1
+	}
 }
 
 func generateRootCmd() *cobra.Command {
