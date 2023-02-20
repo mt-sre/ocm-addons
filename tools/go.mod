@@ -9,7 +9,7 @@ go 1.19
 require (
 	github.com/golangci/golangci-lint v1.51.1
 	github.com/goreleaser/goreleaser v1.15.2
-	github.com/onsi/ginkgo/v2 v2.8.1
+	github.com/onsi/ginkgo/v2 v2.8.3
 	github.com/openshift-online/ocm-cli v0.1.65
 	github.com/uw-labs/lichen v0.1.7
 )
