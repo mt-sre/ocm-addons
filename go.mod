@@ -10,7 +10,7 @@ require (
 	github.com/apex/log v1.9.0
 	github.com/magefile/mage v1.14.0
 	github.com/onsi/ginkgo/v2 v2.8.1
-	github.com/onsi/gomega v1.27.0
+	github.com/onsi/gomega v1.27.1
 	github.com/openshift-online/ocm-cli v0.1.65
 	github.com/openshift-online/ocm-sdk-go v0.1.316
 	github.com/pterm/pterm v0.12.54
