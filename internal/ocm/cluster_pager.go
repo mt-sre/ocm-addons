@@ -19,7 +19,7 @@ const (
 // RetrieveClusters initializes a ClusterPager which will request clusters from OCM with a fixed page size.
 func RetrieveClusters(conn *sdk.Connection, logger log.Interface) (*ClusterPager, error) {
 	request := &clustersListRequest{
-		conn.ClustersMgmt().V1().Clusters().List(),
+		conn.ClustersMgmt().V1().Clusters().List().Parameter("managed", true),
 	}
 
 	return &ClusterPager{
