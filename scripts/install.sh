@@ -37,7 +37,9 @@ function system_kernel() {
 }
 
 function system_arch() {
-     case "$(uname -m)" in
+     arch="$(uname -m)"
+
+     case "${arch}" in
           "x86_64")
           echo "amd64"
           ;;
@@ -48,7 +50,7 @@ function system_arch() {
           echo "arm64"
           ;;
           *)
-          echo ""
+          "${arch}"
           ;;
      esac
 }
