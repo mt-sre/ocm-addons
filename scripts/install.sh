@@ -50,7 +50,7 @@ function system_arch() {
           echo "arm64"
           ;;
           *)
-          "${arch}"
+          echo "${arch}"
           ;;
      esac
 }
