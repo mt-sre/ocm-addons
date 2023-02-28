@@ -28,7 +28,7 @@ See these [instructions](https://go.dev/doc/install) for installing _go_ on your
 Clone this repository to your local machine.
 
 ```bash
-git clone git@github.com/mt-sre/ocm-addons.git
+git clone git@github.com:mt-sre/ocm-addons.git
 ```
 
 Run `./mage install` under the repository root to build the plug-in binary and
@@ -38,7 +38,7 @@ If you have not added `$GOPATH/bin` to your `$PATH`, then you may
 alternatively run `./mage build` and manually move the `bin/ocm-addons`
 binary to any other directory in your `$PATH`.
 
-### Option 3: Install using 'install.sh' (Not supported for Windows)
+### Option 3: Install using 'install.sh' (Not supported for Windows or Mac)
 
 ```bash
 curl -L https://raw.githubusercontent.com/mt-sre/ocm-addons/main/scripts/install.sh | bash
