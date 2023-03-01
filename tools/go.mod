@@ -10,7 +10,7 @@ require (
 	github.com/golangci/golangci-lint v1.51.2
 	github.com/goreleaser/goreleaser v1.15.2
 	github.com/onsi/ginkgo/v2 v2.8.4
-	github.com/openshift-online/ocm-cli v0.1.65
+	github.com/openshift-online/ocm-cli v0.1.66
 	github.com/uw-labs/lichen v0.1.7
 )
 
@@ -168,7 +168,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.3 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -278,8 +278,8 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
-	github.com/openshift-online/ocm-sdk-go v0.1.301 // indirect
-	github.com/openshift/rosa v1.2.10 // indirect
+	github.com/openshift-online/ocm-sdk-go v0.1.318 // indirect
+	github.com/openshift/rosa v1.2.15 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect
@@ -386,7 +386,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.4.2 // indirect
-	k8s.io/apimachinery v0.25.3 // indirect
+	k8s.io/apimachinery v0.26.1 // indirect
 	mvdan.cc/gofumpt v0.4.0 // indirect
 	mvdan.cc/interfacer v0.0.0-20180901003855-c20040233aed // indirect
 	mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b // indirect
