@@ -38,7 +38,7 @@ If you have not added `$GOPATH/bin` to your `$PATH`, then you may
 alternatively run `./mage build` and manually move the `bin/ocm-addons`
 binary to any other directory in your `$PATH`.
 
-### Option 3: Install using 'install.sh' (Not supported for Windows or Mac)
+### Option 3: Install using 'install.sh' (Not supported for Windows)
 
 ```bash
 curl -L https://raw.githubusercontent.com/mt-sre/ocm-addons/main/scripts/install.sh | bash
