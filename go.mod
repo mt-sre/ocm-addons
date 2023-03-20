@@ -31,7 +31,7 @@ require (
 
 require (
 	github.com/blang/semver/v4 v4.0.0
-	github.com/go-playground/validator/v10 v10.11.2
+	github.com/go-playground/validator/v10 v10.12.0
 	github.com/google/go-github/v43 v43.0.0
 	golang.org/x/sys v0.6.0
 )
@@ -72,7 +72,7 @@ require (
 	github.com/jackc/pgtype v1.12.0 // indirect
 	github.com/jackc/pgx/v4 v4.17.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/leodido/go-urn v1.2.2 // indirect
 	github.com/lithammer/fuzzysearch v1.1.5 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -90,7 +90,7 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/crypto v0.5.0 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/tools v0.7.0 // indirect
