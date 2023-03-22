@@ -7,7 +7,7 @@ module tools
 go 1.19
 
 require (
-	github.com/golangci/golangci-lint v1.52.0
+	github.com/golangci/golangci-lint v1.52.1
 	github.com/goreleaser/goreleaser v1.16.2
 	github.com/onsi/ginkgo/v2 v2.9.1
 	github.com/openshift-online/ocm-cli v0.1.66
