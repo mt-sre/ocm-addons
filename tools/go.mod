@@ -9,7 +9,7 @@ go 1.19
 require (
 	github.com/golangci/golangci-lint v1.52.1
 	github.com/goreleaser/goreleaser v1.16.2
-	github.com/onsi/ginkgo/v2 v2.9.1
+	github.com/onsi/ginkgo/v2 v2.9.2
 	github.com/openshift-online/ocm-cli v0.1.66
 	github.com/uw-labs/lichen v0.1.7
 )
@@ -155,7 +155,7 @@ require (
 	github.com/go-openapi/strfmt v0.21.3 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/go-openapi/validate v0.22.0 // indirect
-	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/go-toolsmith/astcast v1.1.0 // indirect
 	github.com/go-toolsmith/astcopy v1.1.0 // indirect
