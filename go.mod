@@ -9,7 +9,7 @@ go 1.19
 require (
 	github.com/apex/log v1.9.0
 	github.com/magefile/mage v1.14.0
-	github.com/onsi/ginkgo/v2 v2.9.2
+	github.com/onsi/ginkgo/v2 v2.9.3
 	github.com/onsi/gomega v1.27.6
 	github.com/openshift-online/ocm-cli v0.1.66
 	github.com/openshift-online/ocm-sdk-go v0.1.338
@@ -47,7 +47,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/evanphx/json-patch/v5 v5.6.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
@@ -91,8 +91,8 @@ require (
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/crypto v0.7.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/term v0.6.0 // indirect
-	golang.org/x/tools v0.7.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/term v0.7.0 // indirect
+	golang.org/x/tools v0.8.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
