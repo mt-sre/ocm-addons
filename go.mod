@@ -13,7 +13,7 @@ require (
 	github.com/onsi/gomega v1.27.8
 	github.com/openshift-online/ocm-cli v0.1.67
 	github.com/openshift-online/ocm-sdk-go v0.1.356
-	github.com/pterm/pterm v0.12.62
+	github.com/pterm/pterm v0.12.63
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
@@ -37,7 +37,7 @@ require (
 )
 
 require (
-	atomicgo.dev/cursor v0.1.1 // indirect
+	atomicgo.dev/cursor v0.1.3 // indirect
 	atomicgo.dev/keyboard v0.2.9 // indirect
 	atomicgo.dev/schedule v0.0.2 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
@@ -94,7 +94,7 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/term v0.8.0 // indirect
+	golang.org/x/term v0.10.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
