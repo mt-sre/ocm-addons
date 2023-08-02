@@ -12,7 +12,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.10
 	github.com/openshift-online/ocm-cli v0.1.67
-	github.com/openshift-online/ocm-sdk-go v0.1.359
+	github.com/openshift-online/ocm-sdk-go v0.1.360
 	github.com/pterm/pterm v0.12.63
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
