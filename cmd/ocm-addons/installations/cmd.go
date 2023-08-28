@@ -5,6 +5,7 @@
 package installations
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/mt-sre/ocm-addons/internal/cli"
@@ -52,7 +53,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error { //nolint
 
 		sess, err := cli.NewSession()
 		if err != nil {
-			return err
+			return fmt.Errorf("starting new session: %w", err)
 		}
 
 		defer sess.End()
@@ -94,7 +95,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error { //nolint
 		if err := clusters.ForEach(ctx, func(cluster *ocm.Cluster) error {
 			cluster, err := cluster.WithAddonInstallations(ctx)
 			if err != nil {
-				return err
+				return fmt.Errorf("retrieving installations for cluster: %w", err)
 			}
 
 			if requiresSub {
@@ -118,7 +119,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error { //nolint
 
 			return nil
 		}); err != nil {
-			return err
+			return fmt.Errorf("processing clusters: %w", err)
 		}
 
 		return nil

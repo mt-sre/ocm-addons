@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func NoOp(cmd *cobra.Command, argv []string) error {
+func NoOp(*cobra.Command, []string) error {
 	return nil
 }
 

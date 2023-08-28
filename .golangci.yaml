@@ -9,6 +9,8 @@ run:
 linters:
   enable-all: true
   disable:
+  # not neccessary right now
+  - depguard
   # Deprecated
   - golint
   - interfacer

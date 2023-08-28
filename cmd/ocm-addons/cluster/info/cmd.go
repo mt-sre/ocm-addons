@@ -5,6 +5,8 @@
 package info
 
 import (
+	"fmt"
+
 	"github.com/mt-sre/ocm-addons/internal/cli"
 	"github.com/mt-sre/ocm-addons/internal/ocm"
 
@@ -48,7 +50,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 
 		sess, err := cli.NewSession()
 		if err != nil {
-			return err
+			return fmt.Errorf("starting new session: %w", err)
 		}
 
 		defer sess.End()
@@ -95,7 +97,7 @@ func run(opts *options) func(cmd *cobra.Command, args []string) error {
 			}
 
 			if err := table.Write(cluster); err != nil {
-				return err
+				return fmt.Errorf("writing cluster to table: %w", err)
 			}
 
 			return nil
