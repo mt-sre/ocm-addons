@@ -120,11 +120,11 @@ type clustersListRequestMock struct {
 
 var _ clustersListRequester = (*clustersListRequest)(nil)
 
-func (a *clustersListRequestMock) Search(query string) clustersListRequester {
+func (a *clustersListRequestMock) Search(string) clustersListRequester {
 	return a
 }
 
-func (a *clustersListRequestMock) RequestPage(ctx context.Context, page, size int) (clustersListResponser, error) {
+func (a *clustersListRequestMock) RequestPage(context.Context, int, int) (clustersListResponser, error) {
 	args := a.Called()
 
 	return args.Get(0).(*clustersListResponseMock), args.Error(1) //nolint:forcetypeassert

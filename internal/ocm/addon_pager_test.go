@@ -118,11 +118,11 @@ type addonsListRequestMock struct {
 	mock.Mock
 }
 
-func (a *addonsListRequestMock) Search(query string) addonsListRequester {
+func (a *addonsListRequestMock) Search(string) addonsListRequester {
 	return a
 }
 
-func (a *addonsListRequestMock) RequestPage(ctx context.Context, page, size int) (addonsListResponser, error) {
+func (a *addonsListRequestMock) RequestPage(context.Context, int, int) (addonsListResponser, error) {
 	args := a.Called()
 
 	return args.Get(0).(*addonsListResponseMock), args.Error(1) //nolint:forcetypeassert

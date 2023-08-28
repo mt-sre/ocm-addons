@@ -27,7 +27,7 @@ func (a *addonsListRequest) Search(query string) addonsListRequester {
 
 func (a *addonsListRequest) RequestPage(ctx context.Context, page, size int) (addonsListResponser, error) {
 	response, err := a.AddOnsListRequest.
-		Size(addonPageSize).
+		Size(size).
 		Page(page).
 		SendContext(ctx)
 

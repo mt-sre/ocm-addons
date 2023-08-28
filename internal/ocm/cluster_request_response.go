@@ -29,7 +29,7 @@ func (c *clustersListRequest) Search(query string) clustersListRequester {
 
 func (c *clustersListRequest) RequestPage(ctx context.Context, page, size int) (clustersListResponser, error) {
 	response, err := c.ClustersListRequest.
-		Size(clusterPageSize).
+		Size(size).
 		Page(page).
 		SendContext(ctx)
 
