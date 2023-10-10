@@ -9,7 +9,7 @@ go 1.20
 require (
 	github.com/golangci/golangci-lint v1.54.2
 	github.com/goreleaser/goreleaser v1.21.2
-	github.com/onsi/ginkgo/v2 v2.12.1
+	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/openshift-online/ocm-cli v0.1.69
 	github.com/uw-labs/lichen v0.1.7
 )
