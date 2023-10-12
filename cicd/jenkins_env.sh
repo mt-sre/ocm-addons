@@ -4,9 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# utilize local go 1.20 version if available
-GO_1_20="/opt/go/1.20.6/bin"
+# utilize local go 1.21 version if available
+GO_1_21="/opt/go/1.21.3/bin"
 
-if [ -d  "${GO_1_20}" ]; then
-     PATH="${GO_1_20}:${PATH}"
+if [ -d  "${GO_1_21}" ]; then
+     PATH="${GO_1_21}:${PATH}"
 fi
