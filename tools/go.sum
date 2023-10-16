@@ -1047,8 +1047,8 @@ github.com/opencontainers/image-spec v1.1.0-rc3 h1:fzg1mXZFj8YdPeNkRXMg+zb88BFV0
 github.com/opencontainers/image-spec v1.1.0-rc3/go.mod h1:X4pATf0uXsnn3g5aiGIsVnJBR4mxhKzfwmvK/B2NTm8=
 github.com/opencontainers/runc v1.1.5 h1:L44KXEpKmfWDcS02aeGm8QNTFXTo2D+8MYGDIJ/GDEs=
 github.com/opencontainers/runc v1.1.5/go.mod h1:1J5XiS+vdZ3wCyZybsuxXZWGrgSr8fFJHLXuG2PsnNg=
-github.com/openshift-online/ocm-cli v0.1.69 h1:t2j/V4KT42hcNy51Gv9EIDLlNVX49ivvsEE6beelS38=
-github.com/openshift-online/ocm-cli v0.1.69/go.mod h1:9CVIJS06CCjphGjDL41UFXgy7atKgQrK7pvH3iWcYis=
+github.com/openshift-online/ocm-cli v0.1.70 h1:LTfEZ7mtamD770J+5glaAl6swS4CnBR5qaNBnbVc4Pc=
+github.com/openshift-online/ocm-cli v0.1.70/go.mod h1:9CVIJS06CCjphGjDL41UFXgy7atKgQrK7pvH3iWcYis=
 github.com/openshift-online/ocm-sdk-go v0.1.368 h1:qP+gkChV8WDwwpkUw1xUyjTXKdvrwyd70Gff2GMUSeU=
 github.com/openshift-online/ocm-sdk-go v0.1.368/go.mod h1:KYOw8kAKAHyPrJcQoVR82CneQ4ofC02Na4cXXaTq4Nw=
 github.com/openshift/rosa v1.2.24 h1:vv0yYnWHx6CCPEAau/0rS54P2ksaf+uWXb1TQPWxiYE=
