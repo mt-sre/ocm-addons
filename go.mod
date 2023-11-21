@@ -11,7 +11,7 @@ require (
 	github.com/magefile/mage v1.15.0
 	github.com/onsi/ginkgo/v2 v2.13.1
 	github.com/onsi/gomega v1.30.0
-	github.com/openshift-online/ocm-cli v0.1.70
+	github.com/openshift-online/ocm-cli v0.1.71
 	github.com/openshift-online/ocm-sdk-go v0.1.386
 	github.com/pterm/pterm v0.12.70
 	github.com/spf13/cobra v1.8.0
