@@ -10,7 +10,7 @@ require (
 	github.com/golangci/golangci-lint v1.55.2
 	github.com/goreleaser/goreleaser v1.22.1
 	github.com/onsi/ginkgo/v2 v2.13.2
-	github.com/openshift-online/ocm-cli v0.1.71
+	github.com/openshift-online/ocm-cli v0.1.72
 	github.com/uw-labs/lichen v0.1.7
 )
 
@@ -298,7 +298,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc5 // indirect
-	github.com/openshift-online/ocm-sdk-go v0.1.380 // indirect
+	github.com/openshift-online/ocm-sdk-go v0.1.388 // indirect
 	github.com/openshift/rosa v1.2.24 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
