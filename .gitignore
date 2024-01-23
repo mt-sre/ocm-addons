@@ -12,3 +12,7 @@ bin/
 
 # ignore release artifacts
 dist/
+
+# ignore local mise files
+.mise.local.toml
+.mise.*.local.toml
