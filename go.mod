@@ -9,7 +9,7 @@ go 1.21
 require (
 	github.com/apex/log v1.9.0
 	github.com/magefile/mage v1.15.0
-	github.com/onsi/ginkgo/v2 v2.17.0
+	github.com/onsi/ginkgo/v2 v2.17.1
 	github.com/onsi/gomega v1.32.0
 	github.com/openshift-online/ocm-cli v0.1.72
 	github.com/openshift-online/ocm-sdk-go v0.1.413
