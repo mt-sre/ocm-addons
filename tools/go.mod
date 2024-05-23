@@ -9,7 +9,7 @@ go 1.21
 require (
 	github.com/golangci/golangci-lint v1.58.2
 	github.com/goreleaser/goreleaser v1.24.0
-	github.com/onsi/ginkgo/v2 v2.17.3
+	github.com/onsi/ginkgo/v2 v2.18.0
 	github.com/openshift-online/ocm-cli v0.1.73
 	github.com/uw-labs/lichen v0.1.7
 )
