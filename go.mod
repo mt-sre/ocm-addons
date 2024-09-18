@@ -31,7 +31,7 @@ require (
 
 require (
 	github.com/blang/semver/v4 v4.0.0
-	github.com/go-playground/validator/v10 v10.22.0
+	github.com/go-playground/validator/v10 v10.22.1
 	github.com/google/go-github/v43 v43.0.0
 	golang.org/x/sys v0.25.0
 )
