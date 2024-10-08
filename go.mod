@@ -12,7 +12,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.20.0
 	github.com/onsi/gomega v1.34.1
 	github.com/openshift-online/ocm-cli v0.1.75
-	github.com/openshift-online/ocm-sdk-go v0.1.442
+	github.com/openshift-online/ocm-sdk-go v0.1.445
 	github.com/pterm/pterm v0.12.79
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
@@ -33,7 +33,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/google/go-github/v43 v43.0.0
-	golang.org/x/sys v0.25.0
+	golang.org/x/sys v0.26.0
 )
 
 require (
