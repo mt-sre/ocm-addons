@@ -10,7 +10,7 @@ require (
 	github.com/golangci/golangci-lint v1.59.1
 	github.com/goreleaser/goreleaser v1.24.0
 	github.com/onsi/ginkgo/v2 v2.20.0
-	github.com/openshift-online/ocm-cli v0.1.76
+	github.com/openshift-online/ocm-cli v1.0.2
 	github.com/uw-labs/lichen v0.1.7
 )
 
