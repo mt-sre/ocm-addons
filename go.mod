@@ -22,7 +22,7 @@ require (
 
 require gopkg.in/yaml.v3 v3.0.1
 
-require github.com/mt-sre/go-ci v0.6.9
+require github.com/mt-sre/go-ci v0.6.10
 
 require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
@@ -104,7 +104,6 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/zalando/go-keyring v0.2.3 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.19.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
