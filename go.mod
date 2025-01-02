@@ -4,7 +4,7 @@
 
 module github.com/mt-sre/ocm-addons
 
-go 1.21
+go 1.23
 
 require (
 	github.com/apex/log v1.9.0
