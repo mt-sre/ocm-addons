@@ -7,7 +7,7 @@ module tools
 go 1.23
 
 require (
-	github.com/golangci/golangci-lint v1.63.3
+	github.com/golangci/golangci-lint v1.63.4
 	github.com/goreleaser/goreleaser v1.26.2
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/openshift-online/ocm-cli v1.0.3
