@@ -35,11 +35,11 @@ func main() {
     cred := wincred.NewGenericCredential("myGoApplication")
     cred.CredentialBlob = []byte("my secret")
     err := cred.Write()
-
+    
     if err != nil {
         fmt.Println(err)
     }
-}
+} 
 ```
 
 ### Retrieve a credential object
@@ -56,7 +56,7 @@ func main() {
     if err == nil {
         fmt.Println(string(cred.CredentialBlob))
     }
-}
+} 
 ```
 
 ### Remove a credential object
@@ -75,7 +75,7 @@ func main() {
         return
     }
     cred.Delete()
-}
+} 
 ```
 
 ### List all available credentials

@@ -45,7 +45,7 @@ Update model version v0.0.402
 ## 0.1.445
 - Update model version v0.0.398
   - Add updates for GCP Private Service Connect feature
-
+  
 ## 0.1.444
 - Update model version v0.0.397
   - Add `FlapDetection` field to `status_board.statuses` model
@@ -174,7 +174,7 @@ Update model version v0.0.402
 - Add RolePolicyBindings to the AWS resource model to support STS Arbitrary Policies feature.
 
 ## 0.1.416
-- Update windows api.openshift certs
+- Update windows api.openshift certs 
 
 ## 0.1.415
 - Update model version v0.0.369
@@ -219,7 +219,7 @@ Update model version v0.0.402
   - Add `ComponentRoutes` attribute to `Ingress`
 
 ## 0.1.406
-- Migrate Keychain `securestore` usage to non-CGO libraries
+- Migrate Keychain `securestore` usage to non-CGO libraries 
 
 ## 0.1.405
 - Update model version v0.0.359
@@ -383,7 +383,7 @@ Update model version v0.0.402
 
 ## 0.1.369
 - Update model version to v0.0.321
-  - Exposes `/api/clusters_mgmt/v1/aws_inquiries/sts_account_roles` in the SDK
+  - Exposes `/api/clusters_mgmt/v1/aws_inquiries/sts_account_roles` in the SDK 
 
 ## 0.1.368
 - Update model version v0.0.318
@@ -439,7 +439,7 @@ Update model version v0.0.402
 - Update model version v0.0.302
   - Add property `MarketplaceGCP` to `billing_model_type` in `clusters_mgmt` and `accounts_mgmt`
   - Document `GovCloud`, `KMSLocationID` and `KMSLocationName` fields to `CloudRegion`
-  - Document `fetchRegions=true` to `cloud_providers`
+  - Document `fetchRegions=true` to `cloud_providers` 
 
 ## 0.1.356
 - Update model version v0.0.301
