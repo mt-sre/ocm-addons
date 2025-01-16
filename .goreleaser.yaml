@@ -2,11 +2,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+version: 2
 project_name: ocm-addons
 before:
   hooks:
-  - go mod tidy
-  - go mod verify
+  - make check
 builds:
 - env:
   - CGO_ENABLED=0
@@ -22,6 +22,11 @@ builds:
   - -X 'github.com/mt-sre/ocm-addons/internal/meta.commit={{.Commit}}'
   - -X 'github.com/mt-sre/ocm-addons/internal/meta.date={{.Date}}'
   - -X 'github.com/mt-sre/ocm-addons/internal/meta.builtBy=goreleaser'
+  hooks:
+    post:
+    - env:
+      - BIN_PATH={{ .Path }}
+      cmd: make license-check
 archives:
 - format_overrides:
   - goos: windows
@@ -29,7 +34,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 changelog:
   use: github
   groups:

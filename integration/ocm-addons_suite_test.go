@@ -54,23 +54,7 @@ var _ = BeforeSuite(func() {
 var errSetup = errors.New("test setup failed")
 
 func getOCMBinPath() (string, error) {
-	dir, ok := os.LookupEnv("DEPENDENCY_DIR")
-	if !ok {
-		root, err := projectRoot()
-		if err != nil {
-			return "", fmt.Errorf("determining project root: %w", err)
-		}
-
-		dir = filepath.Join(root, ".cache", "dependencies")
-	}
-
-	ocmBin := filepath.Join(dir, "bin", "ocm")
-
-	if _, err := os.Stat(ocmBin); errors.Is(err, os.ErrNotExist) {
-		return "", fmt.Errorf("checking if ocm-cli binary exists: %w", errSetup)
-	}
-
-	return ocmBin, nil
+	return exec.LookPath("ocm")
 }
 
 func buildPluginBinary() (string, error) {
@@ -94,6 +78,10 @@ func buildPluginBinary() (string, error) {
 }
 
 func projectRoot() (string, error) {
+	if root, ok := os.LookupEnv("PROJECT_ROOT"); ok {
+		return root, nil
+	}
+
 	var buf bytes.Buffer
 
 	cmd := exec.Command("git", "rev-parse", "--show-toplevel")

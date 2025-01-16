@@ -2,10 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# ignore dev binaries
-.cache/
-bin/
-
 # ignore test artifacts
 *.out
 *.test
@@ -13,6 +9,4 @@ bin/
 # ignore release artifacts
 dist/
 
-# ignore local mise files
-.mise.local.toml
-.mise.*.local.toml
+result

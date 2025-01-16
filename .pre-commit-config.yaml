@@ -3,13 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-default_stages:
-  - commit
-  - merge-commit
 repos:
 # Fixers
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.1.0
+  rev: v5.0.0
   hooks:
   - id: trailing-whitespace
   - id: end-of-file-fixer
@@ -18,7 +15,7 @@ repos:
     args: [--fix=lf]
 
 - repo: https://github.com/dnephin/pre-commit-golang
-  rev: v0.5.0
+  rev: v0.5.1
   hooks:
   - id: go-fmt
 
@@ -26,14 +23,14 @@ repos:
   hooks:
   - id: go-mod-tidy
     name: go-mod-tidy
-    entry: ./mage check:tidy
+    entry: make tidy
     language: system
     pass_filenames: false
     always_run: true
     require_serial: true
   - id: go-mod-verify
     name: go-mod-verify
-    entry: ./mage check:verify
+    entry: make verify
     language: system
     pass_filenames: false
     always_run: true
@@ -42,46 +39,30 @@ repos:
 
 # Checkers
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.1.0
+  rev: v5.0.0
   hooks:
   - id: check-added-large-files
+    exclude: "^vendor/"
   - id: check-case-conflict
   - id: check-merge-conflict
   - id: check-symlinks
   - id: check-yaml
   - id: detect-private-key
+    exclude: "^vendor/"
 
 - repo: local
   hooks:
   - id: golangci-lint
     name: golangci-lint
-    entry: ./mage check:lint
+    entry: make golangci-lint
     language: system
     pass_filenames: false
+    require_serial: true
     types: [go]
-    require_serial: true
-  - id: license-check
-    name: Check pkgs for incompatible licenses
-    entry: ./mage check:license
-    language: system
-    files: '(\bgo\.mod$)|(\.lichen\.ya?ml$)'
-    pass_filenames: false
-    require_serial: true
+    exclude: "^vendor/"
 
 - repo: https://github.com/fsfe/reuse-tool
-  rev: v1.0.0
+  rev: v5.0.2
   hooks:
-  - id: reuse
-
-
-# Pre-Push
-- repo: local
-  hooks:
-  - id: test
-    name: test
-    entry: ./mage test
-    language: system
-    stages: [push]
-    always_run: true
-    pass_filenames: false
-    require_serial: true
+  - id: reuse-lint-file
+    exclude: "^vendor/"
