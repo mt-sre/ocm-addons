@@ -1,0 +1,5 @@
+version = 1
+SPDX-PackageName = "ocm-addons"
+SPDX-PackageSupplier = "Red Hat Inc. <sd-mt-sre@redhat.com>"
+SPDX-PackageDownloadLocation = "https://github.com/mt-sre/ocm-addons"
+annotations = []

@@ -8,6 +8,9 @@ go 1.23
 
 require (
 	github.com/apex/log v1.9.0
+	github.com/blang/semver/v4 v4.0.0
+	github.com/go-playground/validator/v10 v10.23.0
+	github.com/google/go-github/v43 v43.0.0
 	github.com/magefile/mage v1.15.0
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2
@@ -18,22 +21,9 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/multierr v1.11.0
-)
-
-require gopkg.in/yaml.v3 v3.0.1
-
-require github.com/mt-sre/go-ci v0.6.10
-
-require (
-	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
-	golang.org/x/text v0.21.0
-)
-
-require (
-	github.com/blang/semver/v4 v4.0.0
-	github.com/go-playground/validator/v10 v10.24.0
-	github.com/google/go-github/v43 v43.0.0
 	golang.org/x/sys v0.29.0
+	golang.org/x/text v0.21.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -53,14 +43,14 @@ require (
 	github.com/dvsekhvalnov/jose2go v1.6.0 // indirect
 	github.com/evanphx/json-patch/v5 v5.6.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/glog v1.2.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
@@ -87,6 +77,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.23 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -103,10 +94,10 @@ require (
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/zalando/go-keyring v0.2.3 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.19.0 // indirect
-	golang.org/x/term v0.28.0 // indirect
+	golang.org/x/term v0.27.0 // indirect
 	golang.org/x/tools v0.28.0 // indirect
 	google.golang.org/protobuf v1.36.1 // indirect
 )

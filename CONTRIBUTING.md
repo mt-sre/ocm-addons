@@ -42,21 +42,20 @@ git fetch $(curl -s https://api.github.com/repos/mt-sre/ocm-addons/pulls/${PULL_
 
 ### Installing `pre-commit` hooks
 
-Run `./mage hooks:enable` to install `pre-commit` and any configured _git_ hooks.
+Run `nix develop --command pre-commit install` to install `pre-commit` and any configured _git_ hooks.
 This will ensure that code quality is checked after every commit and also that
 tests are run before each push.
 
 ### Running tests
 
-To run tests on an ad-hoc basis run `./mage test` and when adding new packages
-run `./mage check` to tidy modules and verfiy that they are compliant with
+To run tests on an ad-hoc basis run `nix develop --command make test` and when adding new packages
+run `nix develop --command make lint` to tidy modules and verfiy that they are compliant with
 this project's license.
 
 ### Building the Plug-in
 
-Run `./mage install` to build and install the plug-in in `$GOPATH/bin`.
-The plug-in can then be run standalone as `ocm-addons` or through `ocm`
-if it is installed as `ocm addons`.
+Run `nix develop --command make` to build the plug-in. Binaries will be located under the
+`dist` folder.
 
 ## Submitting Pull Requests
 
