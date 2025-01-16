@@ -124,9 +124,9 @@ fmt.Println("All text will now be bold magenta.")
 ```
 
 ### Disable/Enable color
-
-There might be a case where you want to explicitly disable/enable color output. the
-`go-isatty` package will automatically disable color output for non-tty output streams
+ 
+There might be a case where you want to explicitly disable/enable color output. the 
+`go-isatty` package will automatically disable color output for non-tty output streams 
 (for example if the output were piped directly to `less`).
 
 The `color` package also disables color output if the [`NO_COLOR`](https://no-color.org) environment
@@ -160,7 +160,7 @@ c.Println("This prints again cyan...")
 
 ## GitHub Actions
 
-To output color in GitHub Actions (or other CI systems that support ANSI colors), make sure to set `color.NoColor = false` so that it bypasses the check for non-tty output streams.
+To output color in GitHub Actions (or other CI systems that support ANSI colors), make sure to set `color.NoColor = false` so that it bypasses the check for non-tty output streams. 
 
 ## Todo
 

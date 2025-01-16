@@ -22,10 +22,10 @@
 <a href="https://opensource.org/licenses/MIT" target="_blank">
 <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT">
 </a>
-
+  
 <a href="https://goreportcard.com/report/github.com/atomicgo/schedule" target="_blank">
 <img src="https://goreportcard.com/badge/github.com/atomicgo/schedule?style=flat-square" alt="Go report">
-</a>
+</a>   
 
 </p>
 
