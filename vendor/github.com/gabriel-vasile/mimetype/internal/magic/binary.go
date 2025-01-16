@@ -21,6 +21,10 @@ var (
 	SWF = prefix([]byte("CWS"), []byte("FWS"), []byte("ZWS"))
 	// Torrent has bencoded text in the beginning.
 	Torrent = prefix([]byte("d8:announce"))
+	// PAR1 matches a parquet file.
+	Par1 = prefix([]byte{0x50, 0x41, 0x52, 0x31})
+	// CBOR matches a Concise Binary Object Representation https://cbor.io/
+	CBOR = prefix([]byte{0xD9, 0xD9, 0xF7})
 )
 
 // Java bytecode and Mach-O binaries share the same magic number.
@@ -32,7 +36,7 @@ func classOrMachOFat(in []byte) bool {
 		return false
 	}
 
-	return bytes.HasPrefix(in, []byte{0xCA, 0xFE, 0xBA, 0xBE})
+	return binary.BigEndian.Uint32(in) == macho.MagicFat
 }
 
 // Class matches a java class file.
@@ -42,7 +46,7 @@ func Class(raw []byte, limit uint32) bool {
 
 // MachO matches Mach-O binaries format.
 func MachO(raw []byte, limit uint32) bool {
-	if classOrMachOFat(raw) && raw[7] < 20 {
+	if classOrMachOFat(raw) && raw[7] < 0x14 {
 		return true
 	}
 
