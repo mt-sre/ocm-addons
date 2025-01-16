@@ -50,7 +50,7 @@
         ];
     in
     {
-      devShell = pkgs.mkShell {
+      devShells.default = pkgs.mkShell {
         buildInputs = devDeps;
       };
   });
