@@ -37,6 +37,10 @@ verify:
 	go mod verify
 .PHONY: verify
 
+check-flake:
+	nix flake check --all-systems
+.PHONY: check-flake
+
 test: test-units test-integration
 
 test-units:

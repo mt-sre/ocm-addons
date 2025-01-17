@@ -5,7 +5,6 @@
 name: "Test"
 on:
   pull_request:
-  push:
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -18,5 +17,5 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
         github_access_token: ${{ secrets.GITHUB_TOKEN }}
     - uses: DeterminateSystems/magic-nix-cache-action@v2
+    - run: make check-flake
     - run: nix develop --command make
-    - run: nix flake check
