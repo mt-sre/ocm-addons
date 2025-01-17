@@ -6,7 +6,7 @@ build:
 	goreleaser release --snapshot --clean
 
 release:
-	goreleaser release --rm-dist
+	goreleaser release --clean
 .PHONY: release
 
 check: lint test
