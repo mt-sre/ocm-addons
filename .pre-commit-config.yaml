@@ -15,11 +15,6 @@ repos:
   - id: mixed-line-ending
     args: [--fix=lf]
 
-- repo: https://github.com/dnephin/pre-commit-golang
-  rev: v0.5.1
-  hooks:
-  - id: go-fmt
-
 - repo: local
   hooks:
   - id: go-mod-tidy
@@ -36,6 +31,16 @@ repos:
     pass_filenames: false
     always_run: true
     require_serial: true
+- repo: local
+  hooks:
+  - id: golangci-lint
+    name: golangci-lint
+    entry: make golangci-lint
+    language: system
+    pass_filenames: false
+    require_serial: true
+    types: [go]
+
 
 
 # Checkers
@@ -48,16 +53,6 @@ repos:
   - id: check-symlinks
   - id: check-yaml
   - id: detect-private-key
-
-- repo: local
-  hooks:
-  - id: golangci-lint
-    name: golangci-lint
-    entry: make golangci-lint
-    language: system
-    pass_filenames: false
-    require_serial: true
-    types: [go]
 
 - repo: https://github.com/fsfe/reuse-tool
   rev: v5.0.2
