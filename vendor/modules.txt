@@ -258,7 +258,7 @@ github.com/openshift-online/ocm-cli/pkg/info
 github.com/openshift-online/ocm-cli/pkg/ocm
 github.com/openshift-online/ocm-cli/pkg/ocm/connection-builder
 github.com/openshift-online/ocm-cli/pkg/properties
-# github.com/openshift-online/ocm-sdk-go v0.1.453
+# github.com/openshift-online/ocm-sdk-go v0.1.455
 ## explicit; go 1.21
 github.com/openshift-online/ocm-sdk-go
 github.com/openshift-online/ocm-sdk-go/accesstransparency
