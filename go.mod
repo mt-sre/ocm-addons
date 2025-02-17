@@ -17,7 +17,7 @@ require (
 	github.com/openshift-online/ocm-cli v1.0.3
 	github.com/openshift-online/ocm-sdk-go v0.1.459
 	github.com/pterm/pterm v0.12.80
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/multierr v1.11.0
