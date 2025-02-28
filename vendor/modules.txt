@@ -250,8 +250,8 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/openshift-online/ocm-cli v1.0.3
-## explicit; go 1.21
+# github.com/openshift-online/ocm-cli v1.0.4
+## explicit; go 1.22
 github.com/openshift-online/ocm-cli/pkg/config
 github.com/openshift-online/ocm-cli/pkg/debug
 github.com/openshift-online/ocm-cli/pkg/info
@@ -351,6 +351,9 @@ github.com/xo/terminfo
 ## explicit; go 1.18
 github.com/zalando/go-keyring
 github.com/zalando/go-keyring/secret_service
+# go.uber.org/mock v0.5.0
+## explicit; go 1.22
+go.uber.org/mock/gomock
 # go.uber.org/multierr v1.11.0
 ## explicit; go 1.19
 go.uber.org/multierr
