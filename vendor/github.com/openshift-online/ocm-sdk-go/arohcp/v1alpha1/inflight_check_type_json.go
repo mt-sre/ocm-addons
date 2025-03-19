@@ -17,7 +17,7 @@ limitations under the License.
 // IMPORTANT: This file has been generated automatically, refrain from modifying it manually as all
 // your changes will be lost when the file is generated again.
 
-package v1 // github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1
+package v1alpha1 // github.com/openshift-online/ocm-sdk-go/arohcp/v1alpha1
 
 import (
 	"io"
@@ -27,10 +27,10 @@ import (
 	"github.com/openshift-online/ocm-sdk-go/helpers"
 )
 
-// MarshalVersionGate writes a value of the 'version_gate' type to the given writer.
-func MarshalVersionGate(object *VersionGate, writer io.Writer) error {
+// MarshalInflightCheck writes a value of the 'inflight_check' type to the given writer.
+func MarshalInflightCheck(object *InflightCheck, writer io.Writer) error {
 	stream := helpers.NewStream(writer)
-	WriteVersionGate(object, stream)
+	WriteInflightCheck(object, stream)
 	err := stream.Flush()
 	if err != nil {
 		return err
@@ -38,15 +38,15 @@ func MarshalVersionGate(object *VersionGate, writer io.Writer) error {
 	return stream.Error
 }
 
-// WriteVersionGate writes a value of the 'version_gate' type to the given stream.
-func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
+// WriteInflightCheck writes a value of the 'inflight_check' type to the given stream.
+func WriteInflightCheck(object *InflightCheck, stream *jsoniter.Stream) {
 	count := 0
 	stream.WriteObjectStart()
 	stream.WriteObjectField("kind")
 	if object.bitmap_&1 != 0 {
-		stream.WriteString(VersionGateLinkKind)
+		stream.WriteString(InflightCheckLinkKind)
 	} else {
-		stream.WriteString(VersionGateKind)
+		stream.WriteString(InflightCheckKind)
 	}
 	count++
 	if object.bitmap_&2 != 0 {
@@ -71,8 +71,8 @@ func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
 		if count > 0 {
 			stream.WriteMore()
 		}
-		stream.WriteObjectField("sts_only")
-		stream.WriteBool(object.stsOnly)
+		stream.WriteObjectField("details")
+		stream.WriteVal(object.details)
 		count++
 	}
 	present_ = object.bitmap_&16 != 0
@@ -80,8 +80,8 @@ func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
 		if count > 0 {
 			stream.WriteMore()
 		}
-		stream.WriteObjectField("cluster_condition")
-		stream.WriteString(object.clusterCondition)
+		stream.WriteObjectField("ended_at")
+		stream.WriteString((object.endedAt).Format(time.RFC3339))
 		count++
 	}
 	present_ = object.bitmap_&32 != 0
@@ -89,8 +89,8 @@ func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
 		if count > 0 {
 			stream.WriteMore()
 		}
-		stream.WriteObjectField("creation_timestamp")
-		stream.WriteString((object.creationTimestamp).Format(time.RFC3339))
+		stream.WriteObjectField("name")
+		stream.WriteString(object.name)
 		count++
 	}
 	present_ = object.bitmap_&64 != 0
@@ -98,8 +98,8 @@ func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
 		if count > 0 {
 			stream.WriteMore()
 		}
-		stream.WriteObjectField("description")
-		stream.WriteString(object.description)
+		stream.WriteObjectField("restarts")
+		stream.WriteInt(object.restarts)
 		count++
 	}
 	present_ = object.bitmap_&128 != 0
@@ -107,8 +107,8 @@ func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
 		if count > 0 {
 			stream.WriteMore()
 		}
-		stream.WriteObjectField("documentation_url")
-		stream.WriteString(object.documentationURL)
+		stream.WriteObjectField("started_at")
+		stream.WriteString((object.startedAt).Format(time.RFC3339))
 		count++
 	}
 	present_ = object.bitmap_&256 != 0
@@ -116,54 +116,27 @@ func WriteVersionGate(object *VersionGate, stream *jsoniter.Stream) {
 		if count > 0 {
 			stream.WriteMore()
 		}
-		stream.WriteObjectField("label")
-		stream.WriteString(object.label)
-		count++
-	}
-	present_ = object.bitmap_&512 != 0
-	if present_ {
-		if count > 0 {
-			stream.WriteMore()
-		}
-		stream.WriteObjectField("value")
-		stream.WriteString(object.value)
-		count++
-	}
-	present_ = object.bitmap_&1024 != 0
-	if present_ {
-		if count > 0 {
-			stream.WriteMore()
-		}
-		stream.WriteObjectField("version_raw_id_prefix")
-		stream.WriteString(object.versionRawIDPrefix)
-		count++
-	}
-	present_ = object.bitmap_&2048 != 0
-	if present_ {
-		if count > 0 {
-			stream.WriteMore()
-		}
-		stream.WriteObjectField("warning_message")
-		stream.WriteString(object.warningMessage)
+		stream.WriteObjectField("state")
+		stream.WriteString(string(object.state))
 	}
 	stream.WriteObjectEnd()
 }
 
-// UnmarshalVersionGate reads a value of the 'version_gate' type from the given
+// UnmarshalInflightCheck reads a value of the 'inflight_check' type from the given
 // source, which can be an slice of bytes, a string or a reader.
-func UnmarshalVersionGate(source interface{}) (object *VersionGate, err error) {
+func UnmarshalInflightCheck(source interface{}) (object *InflightCheck, err error) {
 	iterator, err := helpers.NewIterator(source)
 	if err != nil {
 		return
 	}
-	object = ReadVersionGate(iterator)
+	object = ReadInflightCheck(iterator)
 	err = iterator.Error
 	return
 }
 
-// ReadVersionGate reads a value of the 'version_gate' type from the given iterator.
-func ReadVersionGate(iterator *jsoniter.Iterator) *VersionGate {
-	object := &VersionGate{}
+// ReadInflightCheck reads a value of the 'inflight_check' type from the given iterator.
+func ReadInflightCheck(iterator *jsoniter.Iterator) *InflightCheck {
+	object := &InflightCheck{}
 	for {
 		field := iterator.ReadObject()
 		if field == "" {
@@ -172,7 +145,7 @@ func ReadVersionGate(iterator *jsoniter.Iterator) *VersionGate {
 		switch field {
 		case "kind":
 			value := iterator.ReadString()
-			if value == VersionGateLinkKind {
+			if value == InflightCheckLinkKind {
 				object.bitmap_ |= 1
 			}
 		case "id":
@@ -181,46 +154,40 @@ func ReadVersionGate(iterator *jsoniter.Iterator) *VersionGate {
 		case "href":
 			object.href = iterator.ReadString()
 			object.bitmap_ |= 4
-		case "sts_only":
-			value := iterator.ReadBool()
-			object.stsOnly = value
+		case "details":
+			var value interface{}
+			iterator.ReadVal(&value)
+			object.details = value
 			object.bitmap_ |= 8
-		case "cluster_condition":
-			value := iterator.ReadString()
-			object.clusterCondition = value
-			object.bitmap_ |= 16
-		case "creation_timestamp":
+		case "ended_at":
 			text := iterator.ReadString()
 			value, err := time.Parse(time.RFC3339, text)
 			if err != nil {
 				iterator.ReportError("", err.Error())
 			}
-			object.creationTimestamp = value
+			object.endedAt = value
+			object.bitmap_ |= 16
+		case "name":
+			value := iterator.ReadString()
+			object.name = value
 			object.bitmap_ |= 32
-		case "description":
-			value := iterator.ReadString()
-			object.description = value
+		case "restarts":
+			value := iterator.ReadInt()
+			object.restarts = value
 			object.bitmap_ |= 64
-		case "documentation_url":
-			value := iterator.ReadString()
-			object.documentationURL = value
+		case "started_at":
+			text := iterator.ReadString()
+			value, err := time.Parse(time.RFC3339, text)
+			if err != nil {
+				iterator.ReportError("", err.Error())
+			}
+			object.startedAt = value
 			object.bitmap_ |= 128
-		case "label":
-			value := iterator.ReadString()
-			object.label = value
+		case "state":
+			text := iterator.ReadString()
+			value := InflightCheckState(text)
+			object.state = value
 			object.bitmap_ |= 256
-		case "value":
-			value := iterator.ReadString()
-			object.value = value
-			object.bitmap_ |= 512
-		case "version_raw_id_prefix":
-			value := iterator.ReadString()
-			object.versionRawIDPrefix = value
-			object.bitmap_ |= 1024
-		case "warning_message":
-			value := iterator.ReadString()
-			object.warningMessage = value
-			object.bitmap_ |= 2048
 		default:
 			iterator.ReadAny()
 		}
