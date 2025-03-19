@@ -4,7 +4,10 @@
 
 module github.com/mt-sre/ocm-addons
 
-go 1.23
+go 1.23.0
+
+toolchain go1.23.4
+
 require (
 	github.com/apex/log v1.9.0
 	github.com/blang/semver/v4 v4.0.0
