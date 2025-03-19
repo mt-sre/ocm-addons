@@ -211,8 +211,8 @@ github.com/modern-go/reflect2
 # github.com/mtibben/percent v0.2.1
 ## explicit; go 1.14
 github.com/mtibben/percent
-# github.com/onsi/ginkgo/v2 v2.22.2
-## explicit; go 1.22.0
+# github.com/onsi/ginkgo/v2 v2.23.1
+## explicit; go 1.23.0
 github.com/onsi/ginkgo/v2
 github.com/onsi/ginkgo/v2/config
 github.com/onsi/ginkgo/v2/dsl/core
@@ -418,10 +418,11 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.28.0
+# golang.org/x/tools v0.30.0
 ## explicit; go 1.22.0
 golang.org/x/tools/cover
 golang.org/x/tools/go/ast/inspector
+golang.org/x/tools/internal/astutil/edge
 # google.golang.org/protobuf v1.36.1
 ## explicit; go 1.21
 google.golang.org/protobuf/encoding/prototext
