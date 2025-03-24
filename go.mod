@@ -14,7 +14,7 @@ require (
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/google/go-github/v43 v43.0.0
 	github.com/magefile/mage v1.15.0
-	github.com/onsi/ginkgo/v2 v2.23.1
+	github.com/onsi/ginkgo/v2 v2.23.3
 	github.com/onsi/gomega v1.36.2
 	github.com/openshift-online/ocm-cli v1.0.4
 	github.com/openshift-online/ocm-sdk-go v0.1.462
