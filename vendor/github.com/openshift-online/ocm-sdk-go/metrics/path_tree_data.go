@@ -165,6 +165,9 @@ var pathTreeData = `{
             },
             "status": null
           }
+        },
+        "versions": {
+          "-": null
         }
       }
     },
@@ -406,6 +409,7 @@ var pathTreeData = `{
         }
       }
     },
+    "dependencymagnet": {},
     "job_queue": {
       "v1": {
         "queues": {
