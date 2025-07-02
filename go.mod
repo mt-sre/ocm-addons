@@ -11,7 +11,7 @@ toolchain go1.24.1
 require (
 	github.com/apex/log v1.9.0
 	github.com/blang/semver/v4 v4.0.0
-	github.com/go-playground/validator/v10 v10.26.0
+	github.com/go-playground/validator/v10 v10.27.0
 	github.com/google/go-github/v43 v43.0.0
 	github.com/magefile/mage v1.15.0
 	github.com/onsi/ginkgo/v2 v2.23.4
