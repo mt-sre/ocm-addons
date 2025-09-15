@@ -96,7 +96,7 @@ github.com/godbus/dbus/v5
 # github.com/golang-jwt/jwt/v4 v4.5.2
 ## explicit; go 1.16
 github.com/golang-jwt/jwt/v4
-# github.com/golang/glog v1.2.4
+# github.com/golang/glog v1.2.5
 ## explicit; go 1.19
 github.com/golang/glog
 github.com/golang/glog/internal/logsink
@@ -159,7 +159,7 @@ github.com/jackc/pgpassfile
 # github.com/jackc/pgproto3/v2 v2.3.3
 ## explicit; go 1.12
 github.com/jackc/pgproto3/v2
-# github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a
+# github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761
 ## explicit; go 1.14
 github.com/jackc/pgservicefile
 # github.com/jackc/pgtype v1.14.0
@@ -250,16 +250,51 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/openshift-online/ocm-cli v1.0.5
-## explicit; go 1.22
+# github.com/openshift-online/ocm-api-model/clientapi v0.0.432-0.20250828221234-d914d24fd262
+## explicit; go 1.23.0
+github.com/openshift-online/ocm-api-model/clientapi/accesstransparency/v1
+github.com/openshift-online/ocm-api-model/clientapi/accountsmgmt/v1
+github.com/openshift-online/ocm-api-model/clientapi/addonsmgmt/v1
+github.com/openshift-online/ocm-api-model/clientapi/arohcp/v1alpha1
+github.com/openshift-online/ocm-api-model/clientapi/authorizations/v1
+github.com/openshift-online/ocm-api-model/clientapi/clustersmgmt/v1
+github.com/openshift-online/ocm-api-model/clientapi/dependencymagnet
+github.com/openshift-online/ocm-api-model/clientapi/helpers
+github.com/openshift-online/ocm-api-model/clientapi/jobqueue/v1
+github.com/openshift-online/ocm-api-model/clientapi/osdfleetmgmt/v1
+github.com/openshift-online/ocm-api-model/clientapi/servicelogs/v1
+github.com/openshift-online/ocm-api-model/clientapi/servicemgmt/v1
+github.com/openshift-online/ocm-api-model/clientapi/statusboard/v1
+github.com/openshift-online/ocm-api-model/clientapi/webrca/v1
+# github.com/openshift-online/ocm-api-model/model v0.0.432-0.20250828221234-d914d24fd262
+## explicit; go 1.23.0
+github.com/openshift-online/ocm-api-model/model/access_transparency/v1
+github.com/openshift-online/ocm-api-model/model/accounts_mgmt/v1
+github.com/openshift-online/ocm-api-model/model/addons_mgmt/v1
+github.com/openshift-online/ocm-api-model/model/aro_hcp/v1alpha1
+github.com/openshift-online/ocm-api-model/model/authorizations/v1
+github.com/openshift-online/ocm-api-model/model/clusters_mgmt/v1
+github.com/openshift-online/ocm-api-model/model/dependencymagnet
+github.com/openshift-online/ocm-api-model/model/job_queue/v1
+github.com/openshift-online/ocm-api-model/model/osd_fleet_mgmt/v1
+github.com/openshift-online/ocm-api-model/model/service_logs/v1
+github.com/openshift-online/ocm-api-model/model/service_mgmt/v1
+github.com/openshift-online/ocm-api-model/model/status_board/v1
+github.com/openshift-online/ocm-api-model/model/web_rca/v1
+# github.com/openshift-online/ocm-cli v1.0.8
+## explicit; go 1.23.0
 github.com/openshift-online/ocm-cli/pkg/config
 github.com/openshift-online/ocm-cli/pkg/debug
 github.com/openshift-online/ocm-cli/pkg/info
 github.com/openshift-online/ocm-cli/pkg/ocm
 github.com/openshift-online/ocm-cli/pkg/ocm/connection-builder
 github.com/openshift-online/ocm-cli/pkg/properties
-# github.com/openshift-online/ocm-sdk-go v0.1.465
+# github.com/openshift-online/ocm-common v0.0.29
 ## explicit; go 1.21
+github.com/openshift-online/ocm-common/pkg/deprecation
+github.com/openshift-online/ocm-common/pkg/ocm/consts
+# github.com/openshift-online/ocm-sdk-go v0.1.477
+## explicit; go 1.23.0
 github.com/openshift-online/ocm-sdk-go
 github.com/openshift-online/ocm-sdk-go/accesstransparency
 github.com/openshift-online/ocm-sdk-go/accesstransparency/v1
